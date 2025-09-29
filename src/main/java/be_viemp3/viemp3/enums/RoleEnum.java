@@ -5,5 +5,5 @@ public enum RoleEnum {
     MOD,
 //    VIP,
 //    PREMIUM,
-    USER
+    USER;
 }

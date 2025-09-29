@@ -21,7 +21,7 @@ public class VerificationToken {
 
     private String otp;
 
-    private LocalDateTime expiryDate; // hết hạn sau 10 phút
+    private LocalDateTime expiryDate;
 
-    private boolean used = false; // để tránh reuse OTP
+    private boolean used = false;
 }
