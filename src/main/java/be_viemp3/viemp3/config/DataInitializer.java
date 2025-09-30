@@ -5,15 +5,12 @@ import be_viemp3.viemp3.enums.GenreEnum;
 import be_viemp3.viemp3.enums.ReportEnum;
 import be_viemp3.viemp3.enums.RoleEnum;
 import be_viemp3.viemp3.enums.SubscriptionEnum;
-import be_viemp3.viemp3.repository.analytics.ReportRepository;
 import be_viemp3.viemp3.repository.analytics.ReportStatusRepository;
 import be_viemp3.viemp3.repository.subscription.SubscriptionRepository;
 import be_viemp3.viemp3.repository.user.RoleRepository;
 import be_viemp3.viemp3.repository.music.GenreRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDate;
 
 @Component
 public class DataInitializer implements CommandLineRunner {

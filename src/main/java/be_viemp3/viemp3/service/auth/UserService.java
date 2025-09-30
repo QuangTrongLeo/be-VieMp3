@@ -49,6 +49,11 @@ public class UserService {
         });
     }
 
+    protected User findUserByEmail(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Email không tồn tại!"));
+    }
+
     // Tạo user
     private User buildUser(String username, String email, String password){
         User user = new User();
