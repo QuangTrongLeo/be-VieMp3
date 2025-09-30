@@ -1,11 +1,12 @@
 package be_viemp3.viemp3.config;
 
-import be_viemp3.viemp3.entity.Genre;
-import be_viemp3.viemp3.entity.Role;
-import be_viemp3.viemp3.entity.Subscription;
+import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.enums.GenreEnum;
+import be_viemp3.viemp3.enums.ReportEnum;
 import be_viemp3.viemp3.enums.RoleEnum;
 import be_viemp3.viemp3.enums.SubscriptionEnum;
+import be_viemp3.viemp3.repository.analytics.ReportRepository;
+import be_viemp3.viemp3.repository.analytics.ReportStatusRepository;
 import be_viemp3.viemp3.repository.subscription.SubscriptionRepository;
 import be_viemp3.viemp3.repository.user.RoleRepository;
 import be_viemp3.viemp3.repository.music.GenreRepository;
@@ -20,13 +21,16 @@ public class DataInitializer implements CommandLineRunner {
     private final GenreRepository genreRepository;
     private final RoleRepository roleRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final ReportStatusRepository reportStatusRepository;
 
     public DataInitializer(GenreRepository genreRepository,
                            RoleRepository roleRepository,
-                           SubscriptionRepository subscriptionRepository) {
+                           SubscriptionRepository subscriptionRepository,
+                           ReportStatusRepository reportStatusRepository) {
         this.genreRepository = genreRepository;
         this.roleRepository = roleRepository;
         this.subscriptionRepository = subscriptionRepository;
+        this.reportStatusRepository = reportStatusRepository;
     }
 
     @Override
@@ -55,6 +59,15 @@ public class DataInitializer implements CommandLineRunner {
                 Subscription sub = new Subscription();
                 sub.setName(subEnum);
                 subscriptionRepository.save(sub);
+            }
+        }
+
+        // --- Khởi tạo report ---
+        for (ReportEnum reportEnum : ReportEnum.values()) {
+            if (!reportStatusRepository.existsByName(reportEnum)) {
+                ReportStatus status = new ReportStatus();
+                status.setName(reportEnum);
+                reportStatusRepository.save(status);
             }
         }
     }

@@ -1,5 +1,6 @@
 package be_viemp3.viemp3.entity;
 
+import be_viemp3.viemp3.enums.ReportEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,18 +10,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "favorite_artists")
-public class FavoriteArtist {
+@Table(name = "report_statuses")
+public class ReportStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "artist_id")
-    private Artist artist;
+    @Enumerated(EnumType.STRING)  // lưu enum thành chuỗi (PENDING, RESOLVED)
+    @Column(nullable = false, unique = true)
+    private ReportEnum name;
 }
 

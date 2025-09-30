@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -31,5 +33,14 @@ public class Song {
     @ManyToOne
     @JoinColumn(name = "genre_id")
     private Genre genre;
+
+    @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ListenHistory> listenHistories;
+
+    @OneToMany(mappedBy = "song", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FavoriteSong> favoriteSongs;
+
+    @ManyToMany(mappedBy = "songs")
+    private List<Playlist> playlists;
 }
 

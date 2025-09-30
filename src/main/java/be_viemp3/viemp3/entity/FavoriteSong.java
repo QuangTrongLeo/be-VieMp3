@@ -16,9 +16,11 @@ public class FavoriteSong {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
+    @JoinColumn(name = "song_id")
     private Song song;
 }
 
