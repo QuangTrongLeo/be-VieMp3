@@ -21,8 +21,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // tất cả endpoint
-                        .allowedOrigins(serverDev) // FE dev server
-                        .allowedOrigins(serverProduct)
+                        .allowedOrigins(serverDev, serverProduct)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowCredentials(true)
                         .allowedHeaders("*");
