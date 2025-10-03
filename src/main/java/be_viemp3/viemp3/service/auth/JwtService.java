@@ -25,7 +25,7 @@ public class JwtService {
     // Tạo Access Token
     public String generateAccessToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getEmail())
+                .setSubject(user.getUsername())
                 .claim("roles", user.getRoles().stream().map(r -> r.getName().name()).toList())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
