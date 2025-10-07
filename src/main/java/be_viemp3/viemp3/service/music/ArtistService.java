@@ -1,6 +1,8 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.dto.request.music.artist.CreateAristRequest;
+import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistAvatarRequest;
+import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistNameRequest;
 import be_viemp3.viemp3.dto.response.music.ArtistResponse;
 import be_viemp3.viemp3.entity.Artist;
 import be_viemp3.viemp3.mapper.music.ArtistMapper;
@@ -54,6 +56,51 @@ public class ArtistService {
         }
     }
 
+    // UPDATE ARTIST NAME
+    public ArtistResponse updateArtistName(UpdateArtistNameRequest request) {
+        Artist artist = findArtistById(request.getArtistId());
+
+        artist.setName(request.getArtistName());
+        artistRepository.save(artist);
+
+        return ArtistMapper.toResponse(artist);
+    }
+
+    // UPDATE ARTIST AVATAR
+    public ArtistResponse updateArtistAvatar(UpdateArtistAvatarRequest request) {
+        Artist artist = findArtistById(request.getArtistId());
+
+        MultipartFile file = request.getAvatar();
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("File avatar không được để trống");
+        }
+
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        try {
+            Path uploadPath = Paths.get(uploadImgDir);
+            Files.createDirectories(uploadPath);
+
+            Path filePath = uploadPath.resolve(fileName);
+            file.transferTo(filePath);
+
+            // Nếu muốn, có thể xóa avatar cũ tại server
+            String oldAvatarPath = artist.getAvatar();
+            if (oldAvatarPath != null && oldAvatarPath.startsWith(domainUrl + "/uploads/")) {
+                Path oldFile = Paths.get(uploadImgDir).resolve(oldAvatarPath.substring((domainUrl + "/uploads/").length()));
+                Files.deleteIfExists(oldFile);
+            }
+
+            // Cập nhật avatar mới
+            artist.setAvatar(domainUrl + "/uploads/" + fileName);
+            artistRepository.save(artist);
+
+            return ArtistMapper.toResponse(artist);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi upload file: " + e.getMessage(), e);
+        }
+    }
+
     // DELETE ARTIST
     public void deleteArtistById(Long artistId) {
         try {
@@ -88,4 +135,9 @@ public class ArtistService {
         return ArtistMapper.toResponseList(artists);
     }
 
+    // ===== FIND ARTIST BY ID =====
+    private Artist findArtistById(Long artistId){
+        return artistRepository.findById(artistId)
+                .orElseThrow(() -> new RuntimeException("Nghệ sĩ không tồn tại với id: " + artistId));
+    }
 }

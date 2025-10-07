@@ -1,8 +1,11 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.dto.request.music.artist.CreateAristRequest;
+import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistAvatarRequest;
+import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistNameRequest;
 import be_viemp3.viemp3.dto.response.music.ArtistResponse;
 import be_viemp3.viemp3.service.music.ArtistService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +23,8 @@ public class ArtistController {
 
     // CREATE ARTIST
     @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<?> createArtist(@RequestPart("name") String name, @RequestPart("avatar") MultipartFile avatar){
+    public ResponseEntity<?> createArtist(@RequestPart("name") String name,
+                                          @RequestPart("avatar") MultipartFile avatar){
         CreateAristRequest request = new CreateAristRequest();
         request.setName(name);
         request.setAvatar(avatar);
@@ -28,12 +32,43 @@ public class ArtistController {
         return ResponseEntity.ok(response);
     }
 
-    // UPDATE ARTIST
-    @PutMapping
-    public ResponseEntity<?> updateArtist(){
-        return ResponseEntity.ok().build();
+    // UPDATE ARTIST NAME
+    @PutMapping("/name")
+    public ResponseEntity<?> updateArtistName(@RequestBody UpdateArtistNameRequest request) {
+        try {
+            ArtistResponse response = artistService.updateArtistName(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            // Lỗi nghiệp vụ (ví dụ: artist không tồn tại)
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            // Lỗi không lường trước
+            return ResponseEntity.internalServerError()
+                    .body("Đã xảy ra lỗi khi cập nhật nghệ sĩ: " + e.getMessage());
+        }
     }
 
+    // UPDATE ARTIST AVATAR
+    @PutMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateArtistAvatar(
+            @RequestParam("artistId") Long artistId,
+            @RequestParam("avatar") MultipartFile avatar) {
+        try {
+            UpdateArtistAvatarRequest request = new UpdateArtistAvatarRequest();
+            request.setArtistId(artistId);
+            request.setAvatar(avatar);
+
+            ArtistResponse response = artistService.updateArtistAvatar(request);
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("Đã xảy ra lỗi khi cập nhật avatar: " + e.getMessage());
+        }
+    }
+    
     // DELETE ARTIST
     @DeleteMapping
     public ResponseEntity<?> deleteArtist(@RequestParam("artistId") Long artistId) {
