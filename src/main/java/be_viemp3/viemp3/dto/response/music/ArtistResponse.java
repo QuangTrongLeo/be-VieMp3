@@ -6,4 +6,5 @@ import lombok.Data;
 public class ArtistResponse {
     private String name;
     private String avatar;
+    private int followers;
 }
