@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -76,8 +74,8 @@ public class AuthSecurity {
                 .build();
     }
 
-    @Bean
-    public AuthenticationManager authenticationManagerAuth(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+    //    @Bean
+    //    public AuthenticationManager authenticationManagerAuth(AuthenticationConfiguration config) throws Exception {
+    //        return config.getAuthenticationManager();
+    //    }
 }

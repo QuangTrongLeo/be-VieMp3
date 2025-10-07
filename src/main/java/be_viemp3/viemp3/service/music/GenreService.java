@@ -1,4 +1,4 @@
-package be_viemp3.viemp3.service.song;
+package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.dto.response.music.GenreResponse;
 import be_viemp3.viemp3.entity.Genre;

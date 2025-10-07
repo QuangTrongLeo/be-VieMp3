@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.dto.response.music.GenreResponse;
-import be_viemp3.viemp3.service.song.GenreService;
+import be_viemp3.viemp3.service.music.GenreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
