@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("${api.vie-mp3-url}/artists")
 public class ArtistController {
@@ -16,6 +18,7 @@ public class ArtistController {
         this.artistService = artistService;
     }
 
+    // CREATE ARTIST
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<?> createArtist(@RequestPart("name") String name, @RequestPart("avatar") MultipartFile avatar){
         CreateAristRequest request = new CreateAristRequest();
@@ -25,13 +28,48 @@ public class ArtistController {
         return ResponseEntity.ok(response);
     }
 
+    // UPDATE ARTIST
     @PutMapping
     public ResponseEntity<?> updateArtist(){
         return ResponseEntity.ok().build();
     }
 
+    // DELETE ARTIST
     @DeleteMapping
-    public ResponseEntity<?> deleteArtist(){
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteArtist(@RequestParam("artistId") Long artistId) {
+        try {
+            artistService.deleteArtistById(artistId);
+            return ResponseEntity.ok("Xóa nghệ sĩ thành công!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Đã xảy ra lỗi không xác định: " + e.getMessage());
+        }
+    }
+
+    // GET ARTIST BY NAME
+    @GetMapping("/{artistName}")
+    public ResponseEntity<?> getArtistByName(@PathVariable String artistName) {
+        try {
+            ArtistResponse response = artistService.getArtistByName(artistName);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Đã xảy ra lỗi khi lấy thông tin nghệ sĩ: " + e.getMessage());
+        }
+    }
+
+    // GET ALL ARTIST
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllArtists() {
+        try {
+            List<ArtistResponse> artists = artistService.getAllArtists();
+            return ResponseEntity.ok(artists);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Đã xảy ra lỗi khi lấy danh sách nghệ sĩ: " + e.getMessage());
+        }
     }
 }

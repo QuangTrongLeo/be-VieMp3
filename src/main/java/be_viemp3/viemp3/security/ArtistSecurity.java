@@ -63,24 +63,21 @@ public class ArtistSecurity {
         }
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChainArtist(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher(apiVieMp3Url + "/artists/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // ADMIN: toàn quyền (GET, POST, PUT, DELETE)
+                        // Cho phép tất cả (kể cả chưa đăng nhập) gọi GET
+                        .requestMatchers(HttpMethod.GET, apiVieMp3Url + "/artists/**").permitAll()
+
+                        // MOD + ADMIN được PUT
+                        .requestMatchers(HttpMethod.PUT, apiVieMp3Url + "/artists/**").hasAnyRole("MOD", "ADMIN")
+
+                        // ADMIN có toàn quyền POST + DELETE
                         .requestMatchers(HttpMethod.POST, apiVieMp3Url + "/artists/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, apiVieMp3Url + "/artists/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, apiVieMp3Url + "/artists/**").hasRole("ADMIN")
-
-                        // MOD: được phép GET và PUT
-                        .requestMatchers(HttpMethod.PUT, apiVieMp3Url + "/artists/**").hasAnyRole("ADMIN", "MOD")
-                        .requestMatchers(HttpMethod.GET, apiVieMp3Url + "/artists/**").hasAnyRole("ADMIN", "MOD")
-
-                        // USER: chỉ được GET
-                        .requestMatchers(HttpMethod.GET, apiVieMp3Url + "/artists/**").hasAnyRole("ADMIN", "MOD", "USER")
 
                         // Các request khác phải xác thực
                         .anyRequest().authenticated()
@@ -89,7 +86,6 @@ public class ArtistSecurity {
                 .addFilterBefore(new JwtArtistFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
-
 
 //    @Bean
 //    public AuthenticationManager authenticationManagerArtist(AuthenticationConfiguration config) throws Exception {
