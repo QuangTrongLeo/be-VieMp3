@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "favorite_artists")
-public class FavoriteArtist {
+@Table(name = "follow_artists")
+public class FollowArtist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

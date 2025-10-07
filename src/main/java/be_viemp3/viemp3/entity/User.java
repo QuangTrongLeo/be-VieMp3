@@ -44,7 +44,7 @@ public class User {
     private List<FavoriteSong> favoriteSongs;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FavoriteArtist> favoriteArtists;
+    private List<FollowArtist> favoriteArtists;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Subscription> subscriptions;

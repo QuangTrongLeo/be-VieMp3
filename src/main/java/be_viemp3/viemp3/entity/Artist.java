@@ -27,6 +27,6 @@ public class Artist {
     private List<Song> songs;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FavoriteArtist> favoriteArtists;
+    private List<FollowArtist> favoriteArtists;
 }
 
