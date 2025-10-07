@@ -17,8 +17,8 @@ public class ArtistService {
 
     private final ArtistRepository artistRepository;
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    @Value("${file.upload-img-dir}")
+    private String uploadImgDir;
 
     @Value("${server.domain-url}")
     private String domainUrl;
@@ -33,7 +33,7 @@ public class ArtistService {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
         try {
-            Path uploadPath = Paths.get(uploadDir);
+            Path uploadPath = Paths.get(uploadImgDir);
             Files.createDirectories(uploadPath);
 
             Path filePath = uploadPath.resolve(fileName);

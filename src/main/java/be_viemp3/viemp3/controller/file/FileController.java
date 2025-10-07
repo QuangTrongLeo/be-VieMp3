@@ -16,13 +16,13 @@ import java.nio.file.Paths;
 @RequestMapping("/uploads")
 public class FileController {
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
+    @Value("${file.upload-img-dir}")
+    private String uploadImgDir;
 
     @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
         try {
-            Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
+            Path filePath = Paths.get(uploadImgDir).resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists()) {
