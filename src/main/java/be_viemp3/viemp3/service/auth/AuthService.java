@@ -5,22 +5,17 @@ import be_viemp3.viemp3.dto.request.auth.RegisterRequest;
 import be_viemp3.viemp3.dto.request.auth.VerifyOtpRequest;
 import be_viemp3.viemp3.dto.response.auth.TokenResponse;
 import be_viemp3.viemp3.entity.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
     private final OtpService otpService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-
-    public AuthService(OtpService otpService, UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService) {
-        this.otpService = otpService;
-        this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
-    }
 
     // Đăng ký
     public void register(RegisterRequest request) {
