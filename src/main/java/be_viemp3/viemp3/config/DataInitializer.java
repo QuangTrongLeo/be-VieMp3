@@ -9,26 +9,18 @@ import be_viemp3.viemp3.repository.analytics.ReportStatusRepository;
 import be_viemp3.viemp3.repository.subscription.SubscriptionRepository;
 import be_viemp3.viemp3.repository.user.RoleRepository;
 import be_viemp3.viemp3.repository.music.GenreRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
     private final GenreRepository genreRepository;
     private final RoleRepository roleRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final ReportStatusRepository reportStatusRepository;
-
-    public DataInitializer(GenreRepository genreRepository,
-                           RoleRepository roleRepository,
-                           SubscriptionRepository subscriptionRepository,
-                           ReportStatusRepository reportStatusRepository) {
-        this.genreRepository = genreRepository;
-        this.roleRepository = roleRepository;
-        this.subscriptionRepository = subscriptionRepository;
-        this.reportStatusRepository = reportStatusRepository;
-    }
 
     @Override
     public void run(String... args) throws Exception {

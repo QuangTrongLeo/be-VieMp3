@@ -5,106 +5,62 @@ import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistAvatarRequest;
 import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistNameRequest;
 import be_viemp3.viemp3.dto.response.music.ArtistResponse;
 import be_viemp3.viemp3.service.music.ArtistService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("${api.vie-mp3-url}/artists")
+@RequiredArgsConstructor
 public class ArtistController {
+
     private final ArtistService artistService;
 
-    public ArtistController(ArtistService artistService) {
-        this.artistService = artistService;
-    }
-
     // CREATE ARTIST
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<?> createArtist(@RequestPart("name") String name,
-                                          @RequestPart("avatar") MultipartFile avatar){
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ArtistResponse> createArtist(@RequestPart("name") String name, @RequestPart("avatar") MultipartFile avatar) {
         CreateAristRequest request = new CreateAristRequest();
         request.setName(name);
         request.setAvatar(avatar);
-        ArtistResponse response = artistService.createArtist(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(artistService.createArtist(request));
     }
 
     // UPDATE ARTIST NAME
     @PutMapping("/name")
-    public ResponseEntity<?> updateArtistName(@RequestBody UpdateArtistNameRequest request) {
-        try {
-            ArtistResponse response = artistService.updateArtistName(request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            // Lỗi nghiệp vụ (ví dụ: artist không tồn tại)
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            // Lỗi không lường trước
-            return ResponseEntity.internalServerError()
-                    .body("Đã xảy ra lỗi khi cập nhật nghệ sĩ: " + e.getMessage());
-        }
+    public ResponseEntity<ArtistResponse> updateArtistName(@RequestBody UpdateArtistNameRequest request) {
+        return ResponseEntity.ok(artistService.updateArtistName(request));
     }
 
     // UPDATE ARTIST AVATAR
     @PutMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateArtistAvatar(
+    public ResponseEntity<ArtistResponse> updateArtistAvatar(
             @RequestParam("artistId") Long artistId,
             @RequestParam("avatar") MultipartFile avatar) {
-        try {
-            UpdateArtistAvatarRequest request = new UpdateArtistAvatarRequest();
-            request.setArtistId(artistId);
-            request.setAvatar(avatar);
-
-            ArtistResponse response = artistService.updateArtistAvatar(request);
-            return ResponseEntity.ok(response);
-
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body("Đã xảy ra lỗi khi cập nhật avatar: " + e.getMessage());
-        }
+        UpdateArtistAvatarRequest request = new UpdateArtistAvatarRequest();
+        request.setArtistId(artistId);
+        request.setAvatar(avatar);
+        return ResponseEntity.ok(artistService.updateArtistAvatar(request));
     }
-    
+
     // DELETE ARTIST
     @DeleteMapping
-    public ResponseEntity<?> deleteArtist(@RequestParam("artistId") Long artistId) {
-        try {
-            artistService.deleteArtistById(artistId);
-            return ResponseEntity.ok("Xóa nghệ sĩ thành công!");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Đã xảy ra lỗi không xác định: " + e.getMessage());
-        }
+    public ResponseEntity<String> deleteArtist(@RequestParam("artistId") Long artistId) {
+        artistService.deleteArtistById(artistId);
+        return ResponseEntity.ok("Xóa nghệ sĩ thành công!");
     }
 
     // GET ARTIST BY NAME
     @GetMapping("/{artistName}")
-    public ResponseEntity<?> getArtistByName(@PathVariable String artistName) {
-        try {
-            ArtistResponse response = artistService.getArtistByName(artistName);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Đã xảy ra lỗi khi lấy thông tin nghệ sĩ: " + e.getMessage());
-        }
+    public ResponseEntity<ArtistResponse> getArtistByName(@PathVariable String artistName) {
+        return ResponseEntity.ok(artistService.getArtistByName(artistName));
     }
 
     // GET ALL ARTIST
     @GetMapping("/all")
-    public ResponseEntity<?> getAllArtists() {
-        try {
-            List<ArtistResponse> artists = artistService.getAllArtists();
-            return ResponseEntity.ok(artists);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Đã xảy ra lỗi khi lấy danh sách nghệ sĩ: " + e.getMessage());
-        }
+    public ResponseEntity<List<ArtistResponse>> getAllArtists() {
+        return ResponseEntity.ok(artistService.getAllArtists());
     }
 }
