@@ -1,5 +1,6 @@
 package be_viemp3.viemp3.controller.auth;
 
+import be_viemp3.viemp3.common.response.ApiResponse;
 import be_viemp3.viemp3.dto.request.auth.LoginRequest;
 import be_viemp3.viemp3.dto.request.auth.RegisterRequest;
 import be_viemp3.viemp3.dto.request.auth.VerifyOtpRequest;
@@ -16,20 +17,40 @@ public class AuthController {
 
     private final AuthService authService;
 
+    // ===== REGISTER =====
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<Void>> register(@RequestBody RegisterRequest request) {
         authService.register(request);
-        return ResponseEntity.ok("OTP đã được gửi tới email: " + request.getEmail());
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("OTP đã được gửi tới email: " + request.getEmail())
+                        .build()
+        );
     }
 
+    // ===== VERIFY OTP =====
     @PostMapping("/verify-otp")
-    public ResponseEntity<String> verifyOtp(@RequestBody VerifyOtpRequest request) {
+    public ResponseEntity<ApiResponse<Void>> verifyOtp(@RequestBody VerifyOtpRequest request) {
         authService.verifyOtp(request);
-        return ResponseEntity.ok("Xác thực thành công!");
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Xác thực tài khoản thành công")
+                        .build()
+        );
     }
 
+    // ===== LOGIN =====
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+    public ResponseEntity<ApiResponse<TokenResponse>> login(@RequestBody LoginRequest request) {
+        TokenResponse tokenResponse = authService.login(request);
+        return ResponseEntity.ok(
+                ApiResponse.<TokenResponse>builder()
+                        .success(true)
+                        .message("Đăng nhập thành công")
+                        .data(tokenResponse)
+                        .build()
+        );
     }
 }

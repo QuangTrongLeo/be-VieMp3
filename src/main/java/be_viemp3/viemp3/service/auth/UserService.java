@@ -3,7 +3,7 @@ package be_viemp3.viemp3.service.auth;
 import be_viemp3.viemp3.entity.Role;
 import be_viemp3.viemp3.entity.User;
 import be_viemp3.viemp3.enums.RoleEnum;
-import be_viemp3.viemp3.exception.EmailAlreadyExistsException;
+import be_viemp3.viemp3.common.exception.EmailAlreadyExistsException;
 import be_viemp3.viemp3.repository.user.RoleRepository;
 import be_viemp3.viemp3.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

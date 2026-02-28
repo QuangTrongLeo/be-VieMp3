@@ -1,16 +1,14 @@
 package be_viemp3.viemp3.service.auth;
 
 import be_viemp3.viemp3.entity.VerificationToken;
-import be_viemp3.viemp3.exception.VerifyOtpException;
+import be_viemp3.viemp3.common.exception.VerifyOtpException;
 import be_viemp3.viemp3.repository.auth.VerificationTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Random;
 
 @Service

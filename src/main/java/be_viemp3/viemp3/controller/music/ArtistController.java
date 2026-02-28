@@ -1,5 +1,6 @@
 package be_viemp3.viemp3.controller.music;
 
+import be_viemp3.viemp3.common.response.ApiResponse;
 import be_viemp3.viemp3.dto.request.music.artist.CreateAristRequest;
 import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistRequest;
 import be_viemp3.viemp3.dto.response.music.ArtistResponse;
@@ -19,39 +20,72 @@ public class ArtistController {
 
     private final ArtistService artistService;
 
-    // CREATE ARTIST
+    // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ArtistResponse> createArtist(@ModelAttribute CreateAristRequest request) {
-        return ResponseEntity.ok(artistService.createArtist(request));
+    public ResponseEntity<ApiResponse<ArtistResponse>> createArtist(@ModelAttribute CreateAristRequest request) {
+        ArtistResponse response = artistService.createArtist(request);
+        return ResponseEntity.ok(
+                ApiResponse.<ArtistResponse>builder()
+                        .success(true)
+                        .message("Tạo nghệ sĩ thành công")
+                        .data(response)
+                        .build()
+        );
     }
 
-    // UPDATE ARTIST
+    // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ArtistResponse> updateArtist(@ModelAttribute UpdateArtistRequest request) {
-        return ResponseEntity.ok(artistService.updateArtist(request));
+    public ResponseEntity<ApiResponse<ArtistResponse>> updateArtist(@ModelAttribute UpdateArtistRequest request) {
+        ArtistResponse response = artistService.updateArtist(request);
+        return ResponseEntity.ok(
+                ApiResponse.<ArtistResponse>builder()
+                        .success(true)
+                        .message("Cập nhật nghệ sĩ thành công")
+                        .data(response)
+                        .build()
+        );
     }
 
-    // DELETE ARTIST
+    // ===== DELETE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @DeleteMapping
-    public ResponseEntity<String> deleteArtist(@RequestParam("artistId") UUID artistId) {
+    public ResponseEntity<ApiResponse<Void>> deleteArtist(@RequestParam("artistId") UUID artistId) {
         artistService.deleteArtistById(artistId);
-        return ResponseEntity.ok("Xóa nghệ sĩ thành công!");
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Xóa nghệ sĩ thành công")
+                        .build()
+        );
     }
 
-    // GET ARTIST BY NAME
+    // ===== GET BY NAME =====
     @PreAuthorize("permitAll()")
     @GetMapping("/{artistName}")
-    public ResponseEntity<ArtistResponse> getArtistByName(@PathVariable String artistName) {
-        return ResponseEntity.ok(artistService.getArtistByName(artistName));
+    public ResponseEntity<ApiResponse<ArtistResponse>> getArtistByName(@PathVariable String artistName) {
+        ArtistResponse response = artistService.getArtistByName(artistName);
+        return ResponseEntity.ok(
+                ApiResponse.<ArtistResponse>builder()
+                        .success(true)
+                        .message("Lấy thông tin nghệ sĩ thành công")
+                        .data(response)
+                        .build()
+        );
     }
 
-    // GET ALL ARTIST
+    // ===== GET ALL =====
     @PreAuthorize("permitAll()")
     @GetMapping("/all")
-    public ResponseEntity<List<ArtistResponse>> getAllArtists() {
-        return ResponseEntity.ok(artistService.getAllArtists());
+    public ResponseEntity<ApiResponse<List<ArtistResponse>>> getAllArtists() {
+        List<ArtistResponse> responses = artistService.getAllArtists();
+        return ResponseEntity.ok(
+                ApiResponse.<List<ArtistResponse>>builder()
+                        .success(true)
+                        .message("Lấy danh sách nghệ sĩ thành công")
+                        .data(responses)
+                        .build()
+        );
     }
 }

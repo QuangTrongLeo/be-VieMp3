@@ -9,7 +9,6 @@ public class CreateSongRequest {
     private String title;
     private String description;
     private UUID artistId;
-    private UUID albumId;
     private UUID genreId;
     private MultipartFile cover;
     private MultipartFile audio;
