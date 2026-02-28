@@ -13,10 +13,8 @@ import be_viemp3.viemp3.repository.music.SongRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -116,7 +114,7 @@ public class SongService {
     }
 
     // ===== DELETE =====
-    public void deleteSong(UUID songId) {
+    public void deleteSong(String songId) {
         Song song = findSongById(songId);
         if (song.getCover() != null) {
             fileStorageService.deleteByUrl(song.getCover());
@@ -128,7 +126,7 @@ public class SongService {
     }
 
     // ===== REMOVE SONG FROM ALBUM =====
-    public void removeSongFromAlbum(UUID songId) {
+    public void removeSongFromAlbum(String songId) {
         Song song = findSongById(songId);
         if (song.getAlbum() == null) {
             throw new IllegalStateException("Bài hát chưa thuộc album nào");
@@ -137,7 +135,7 @@ public class SongService {
     }
 
     // ===== GET BY ID =====
-    public SongResponse getSongById(UUID songId) {
+    public SongResponse getSongById(String songId) {
         return SongMapper.toResponse(findSongById(songId));
     }
 
@@ -147,21 +145,21 @@ public class SongService {
     }
 
     // ===== GET ALL BY ARTIST =====
-    public List<SongResponse> getSongsByArtist(UUID artistId) {
+    public List<SongResponse> getSongsByArtist(String artistId) {
         artistService.findArtistById(artistId);
         List<Song> songs = songRepository.findByArtistId(artistId);
         return SongMapper.toResponseList(songs);
     }
 
     // ===== GET ALL BY ALBUM =====
-    public List<SongResponse> getSongsByAlbum(UUID albumId) {
+    public List<SongResponse> getSongsByAlbum(String albumId) {
         albumService.findAlbumById(albumId);
         List<Song> songs = songRepository.findByAlbumId(albumId);
         return SongMapper.toResponseList(songs);
     }
 
     // ===== SUPPORT METHOD =====
-    public Song findSongById(UUID id) {
+    public Song findSongById(String id) {
         return songRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Bài hát không tồn tại với id: " + id));

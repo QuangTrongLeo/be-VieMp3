@@ -47,20 +47,31 @@ public class AccountInitializer implements CommandLineRunner {
         if (userRepository.existsByEmail(email)) {
             return;
         }
-        // Nếu role chưa tồn tại thì tạo mới
-        Role role = roleRepository.findByName(roleEnum)
+        // ===== Lấy hoặc tạo role chính (ADMIN / MOD)
+        Role mainRole = roleRepository.findByName(roleEnum)
                 .orElseGet(() -> {
                     Role newRole = new Role();
                     newRole.setName(roleEnum);
                     return roleRepository.save(newRole);
                 });
+        // ===== Lấy hoặc tạo role USER
+        Role userRole = roleRepository.findByName(RoleEnum.USER)
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setName(RoleEnum.USER);
+                    return roleRepository.save(newRole);
+                });
+
+        // ===== Tạo user
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setEnabled(true);
-        user.getRoles().add(role);
+        // ===== Add cả 2 role
+        user.getRoles().add(userRole);   // USER mặc định
+        user.getRoles().add(mainRole);   // ADMIN hoặc MOD
         userRepository.save(user);
-        System.out.println(roleEnum + " account created successfully!");
+        System.out.println(roleEnum + " account created successfully with USER role!");
     }
 }

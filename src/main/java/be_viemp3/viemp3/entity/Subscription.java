@@ -7,9 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -20,7 +18,8 @@ public class Subscription {
     @Id
     @GeneratedValue
     @UuidGenerator
-    private UUID id;
+    @Column(nullable = false, updatable = false)
+    private String id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

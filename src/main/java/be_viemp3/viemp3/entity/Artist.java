@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -17,7 +16,8 @@ public class Artist {
     @Id
     @GeneratedValue
     @UuidGenerator
-    private UUID id;
+    @Column(nullable = false, updatable = false)
+    private String id;
 
     private String name;
     private String avatar;

@@ -11,7 +11,6 @@ import org.hibernate.annotations.UuidGenerator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -22,7 +21,8 @@ public class User {
     @Id
     @GeneratedValue
     @UuidGenerator
-    private UUID id;
+    @Column(nullable = false, updatable = false)
+    private String id;
 
     private String username;
     private String password;

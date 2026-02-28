@@ -11,7 +11,6 @@ import be_viemp3.viemp3.service.file.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +58,7 @@ public class AlbumService {
     }
 
     // ===== DELETE =====
-    public void deleteAlbum(UUID albumId) {
+    public void deleteAlbum(String albumId) {
         Album album = findAlbumById(albumId);
         if (album.getCover() != null) {
             fileStorageService.deleteByUrl(album.getCover());
@@ -68,7 +67,7 @@ public class AlbumService {
     }
 
     // ===== GET BY ID =====
-    public AlbumResponse getAlbumById(UUID albumId) {
+    public AlbumResponse getAlbumById(String albumId) {
         return AlbumMapper.toResponse(findAlbumById(albumId));
     }
 
@@ -78,7 +77,7 @@ public class AlbumService {
     }
 
     // ===== SUPPORT METHOD =====
-    public Album findAlbumById(UUID id) {
+    public Album findAlbumById(String id) {
         return albumRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Album không tồn tại"));

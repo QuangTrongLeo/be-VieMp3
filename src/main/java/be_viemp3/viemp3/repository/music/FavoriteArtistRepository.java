@@ -4,8 +4,6 @@ import be_viemp3.viemp3.entity.FollowArtist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
-
 @Repository
-public interface FavoriteArtistRepository extends JpaRepository<FollowArtist, UUID> {
+public interface FavoriteArtistRepository extends JpaRepository<FollowArtist, String> {
 }

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Data
@@ -18,7 +17,8 @@ public class ListenHistory {
     @Id
     @GeneratedValue
     @UuidGenerator
-    private UUID id;
+    @Column(nullable = false, updatable = false)
+    private String id;
 
     private LocalDateTime listenedAt;
 

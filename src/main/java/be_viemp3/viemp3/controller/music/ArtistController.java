@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.vie-mp3-url}/artists")
@@ -51,7 +50,7 @@ public class ArtistController {
     // ===== DELETE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteArtist(@RequestParam("artistId") UUID artistId) {
+    public ResponseEntity<ApiResponse<Void>> deleteArtist(@RequestParam("artistId") String artistId) {
         artistService.deleteArtistById(artistId);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()

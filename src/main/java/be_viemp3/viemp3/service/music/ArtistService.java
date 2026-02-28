@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.*;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +59,7 @@ public class ArtistService {
     }
 
     // ===== DELETE =====
-    public void deleteArtistById(UUID artistId) {
+    public void deleteArtistById(String artistId) {
         Artist artist = findArtistById(artistId);
         // xóa file avatar
         fileStorageService.deleteByUrl(artist.getAvatar());
@@ -82,7 +81,7 @@ public class ArtistService {
     }
 
     // ===== GET BY ID =====
-    public Artist findArtistById(UUID id) {
+    public Artist findArtistById(String id) {
         return artistRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Nghệ sĩ không tồn tại với id: " + id));

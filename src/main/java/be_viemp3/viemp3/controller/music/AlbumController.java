@@ -12,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.vie-mp3-url}/albums")
@@ -52,7 +51,7 @@ public class AlbumController {
     // ===== DELETE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteAlbum(@RequestParam UUID albumId) {
+    public ResponseEntity<ApiResponse<Void>> deleteAlbum(@RequestParam String albumId) {
         albumService.deleteAlbum(albumId);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
@@ -65,7 +64,7 @@ public class AlbumController {
     // ===== GET BY ID =====
     @PreAuthorize("permitAll()")
     @GetMapping("/{albumId}")
-    public ResponseEntity<ApiResponse<AlbumResponse>> getAlbum(@PathVariable UUID albumId) {
+    public ResponseEntity<ApiResponse<AlbumResponse>> getAlbum(@PathVariable String albumId) {
         AlbumResponse response = albumService.getAlbumById(albumId);
         return ResponseEntity.ok(
                 ApiResponse.<AlbumResponse>builder()

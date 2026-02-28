@@ -12,6 +12,7 @@ public class SongMapper {
         if (song == null) {
             return null;
         }
+
         return SongResponse.builder()
                 .id(song.getId())
                 .title(song.getTitle())
@@ -25,6 +26,10 @@ public class SongMapper {
     }
 
     public static List<SongResponse> toResponseList(List<Song> songs) {
+        if (songs == null) {
+            return List.of();
+        }
+
         return songs.stream()
                 .map(SongMapper::toResponse)
                 .collect(Collectors.toList());

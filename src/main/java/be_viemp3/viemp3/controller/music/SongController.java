@@ -13,7 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.vie-mp3-url}/songs")
@@ -66,7 +65,7 @@ public class SongController {
     // ===== DELETE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteSong(@RequestParam UUID songId) {
+    public ResponseEntity<ApiResponse<Void>> deleteSong(@RequestParam String songId) {
         songService.deleteSong(songId);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
@@ -79,7 +78,7 @@ public class SongController {
     // ===== REMOVE SONG FROM ALBUM =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @DeleteMapping("/{songId}/album")
-    public ResponseEntity<ApiResponse<Void>> removeSongFromAlbum(@PathVariable UUID songId) {
+    public ResponseEntity<ApiResponse<Void>> removeSongFromAlbum(@PathVariable String songId) {
         songService.removeSongFromAlbum(songId);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
@@ -92,7 +91,7 @@ public class SongController {
     // ===== GET BY ID =====
     @PreAuthorize("permitAll()")
     @GetMapping("/{songId}")
-    public ResponseEntity<ApiResponse<SongResponse>> getSongById(@PathVariable UUID songId) {
+    public ResponseEntity<ApiResponse<SongResponse>> getSongById(@PathVariable String songId) {
         SongResponse response = songService.getSongById(songId);
         return ResponseEntity.ok(
                 ApiResponse.<SongResponse>builder()
@@ -120,7 +119,7 @@ public class SongController {
     // ===== GET ALL SONG BY ALBUM =====
     @PreAuthorize("permitAll()")
     @GetMapping("/album/{albumId}")
-    public ResponseEntity<ApiResponse<List<SongResponse>>> getSongsByAlbum(@PathVariable UUID albumId) {
+    public ResponseEntity<ApiResponse<List<SongResponse>>> getSongsByAlbum(@PathVariable String albumId) {
         List<SongResponse> songs = songService.getSongsByAlbum(albumId);
         return ResponseEntity.ok(
                 ApiResponse.<List<SongResponse>>builder()
@@ -134,7 +133,7 @@ public class SongController {
     // ===== GET SONGS BY ARTIST =====
     @PreAuthorize("permitAll()")
     @GetMapping("/artist/{artistId}")
-    public ResponseEntity<ApiResponse<List<SongResponse>>> getSongsByArtist(@PathVariable UUID artistId) {
+    public ResponseEntity<ApiResponse<List<SongResponse>>> getSongsByArtist(@PathVariable String artistId) {
         List<SongResponse> response = songService.getSongsByArtist(artistId);
         return ResponseEntity.ok(
                 ApiResponse.<List<SongResponse>>builder()

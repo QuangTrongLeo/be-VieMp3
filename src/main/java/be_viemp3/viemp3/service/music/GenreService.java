@@ -10,7 +10,6 @@ import be_viemp3.viemp3.repository.music.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +39,7 @@ public class GenreService {
     }
 
     // GET GENRE BY ID
-    public GenreResponse getGenreById(UUID id) {
+    public GenreResponse getGenreById(String id) {
         return GenreMapper.toResponse(findGenreById(id));
     }
 
@@ -57,7 +56,7 @@ public class GenreService {
     }
 
     // DELETE GENRE
-    public void deleteGenre(UUID id) {
+    public void deleteGenre(String id) {
         Genre genre = findGenreById(id);
         if (genre.getSongs() != null && !genre.getSongs().isEmpty()) {
             throw new IllegalStateException("Không thể xóa Genre đang chứa bài hát");
@@ -66,7 +65,7 @@ public class GenreService {
     }
 
     // FIND GENRE BY ID
-    public Genre findGenreById(UUID id) {
+    public Genre findGenreById(String id) {
         return genreRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Genre không tồn tại với id: " + id));

@@ -23,6 +23,27 @@ public class SecurityConfig {
     @Value("${api.vie-mp3-url}")
     private String baseUrl;
 
+    // ===== SECURITY FILTER CHAIN =====
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(baseUrl + "/auth/**").permitAll()
+                        .requestMatchers(baseUrl + "/artists/**").permitAll()
+                        .requestMatchers(baseUrl + "/albums/**").permitAll()
+                        .requestMatchers(baseUrl + "/genres/**").permitAll()
+                        .requestMatchers(baseUrl + "/songs/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class)
+                .build();
+    }
+
     // ===== PASSWORD ENCODER =====
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -34,23 +55,5 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
-    }
-
-    // ===== SECURITY FILTER CHAIN =====
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        return http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(baseUrl + "/auth/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class)
-                .build();
     }
 }

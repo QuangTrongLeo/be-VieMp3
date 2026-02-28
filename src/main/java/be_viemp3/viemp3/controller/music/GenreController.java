@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.vie-mp3-url}/genres")
@@ -51,7 +50,7 @@ public class GenreController {
     // ===== GET BY ID =====
     @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<GenreResponse>> getGenreById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<GenreResponse>> getGenreById(@PathVariable String id) {
         GenreResponse response = genreService.getGenreById(id);
         return ResponseEntity.ok(
                 ApiResponse.<GenreResponse>builder()
@@ -79,7 +78,7 @@ public class GenreController {
     // ===== DELETE =====
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteGenre(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteGenre(@PathVariable String id) {
         genreService.deleteGenre(id);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
