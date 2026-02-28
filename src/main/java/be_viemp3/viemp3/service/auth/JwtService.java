@@ -28,7 +28,7 @@ public class JwtService {
      */
     public String generateAccessToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getUsername())
+                .setSubject(user.getEmail())
                 .claim("roles", user.getRoles().stream()
                         .map(r -> r.getName().name())
                         .toList())
@@ -43,7 +43,7 @@ public class JwtService {
      */
     public String generateRefreshToken(User user) {
         return Jwts.builder()
-                .setSubject(user.getUsername())
+                .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

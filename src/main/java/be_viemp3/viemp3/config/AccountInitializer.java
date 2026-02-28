@@ -44,21 +44,26 @@ public class AccountInitializer implements CommandLineRunner {
     }
 
     private void createAccountIfNotExists(String username, String email, String password, RoleEnum roleEnum) {
-        if (userRepository.existsByEmail(email)) {
-            return;
-        }
-        // ===== Lấy hoặc tạo role chính (ADMIN / MOD)
-        Role mainRole = roleRepository.findByName(roleEnum)
-                .orElseGet(() -> {
-                    Role newRole = new Role();
-                    newRole.setName(roleEnum);
-                    return roleRepository.save(newRole);
-                });
-        // ===== Lấy hoặc tạo role USER
+        if (userRepository.existsByEmail(email)) return;
+        // ===== Lấy hoặc tạo USER role
         Role userRole = roleRepository.findByName(RoleEnum.USER)
                 .orElseGet(() -> {
                     Role newRole = new Role();
                     newRole.setName(RoleEnum.USER);
+                    return roleRepository.save(newRole);
+                });
+        // ===== Lấy hoặc tạo MOD role
+        Role modRole = roleRepository.findByName(RoleEnum.MOD)
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setName(RoleEnum.MOD);
+                    return roleRepository.save(newRole);
+                });
+        // ===== Lấy hoặc tạo ADMIN role
+        Role adminRole = roleRepository.findByName(RoleEnum.ADMIN)
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setName(RoleEnum.ADMIN);
                     return roleRepository.save(newRole);
                 });
 
@@ -68,10 +73,15 @@ public class AccountInitializer implements CommandLineRunner {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setEnabled(true);
-        // ===== Add cả 2 role
-        user.getRoles().add(userRole);   // USER mặc định
-        user.getRoles().add(mainRole);   // ADMIN hoặc MOD
+        user.getRoles().add(userRole);
+        if (roleEnum == RoleEnum.MOD) {
+            user.getRoles().add(modRole);
+        }
+        if (roleEnum == RoleEnum.ADMIN) {
+            user.getRoles().add(modRole);
+            user.getRoles().add(adminRole);
+        }
         userRepository.save(user);
-        System.out.println(roleEnum + " account created successfully with USER role!");
+        System.out.println(roleEnum + " account created successfully!");
     }
 }

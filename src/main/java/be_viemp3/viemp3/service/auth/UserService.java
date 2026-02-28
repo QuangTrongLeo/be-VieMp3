@@ -26,9 +26,7 @@ public class UserService {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException("Tài khoản này đã tồn tại!");
         }
-
         User user = buildUser(username, email, password);
-
         userRepository.save(user);
     }
 
@@ -49,7 +47,7 @@ public class UserService {
         });
     }
 
-    protected User findUserByEmail(String email){
+    public User findUserByEmail(String email){
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Email không tồn tại!"));
     }
