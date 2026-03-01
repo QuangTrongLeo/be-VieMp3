@@ -5,7 +5,7 @@ import be_viemp3.viemp3.enums.GenreEnum;
 import be_viemp3.viemp3.enums.RoleEnum;
 import be_viemp3.viemp3.enums.SubscriptionEnum;
 import be_viemp3.viemp3.repository.subscription.SubscriptionRepository;
-import be_viemp3.viemp3.repository.user.RoleRepository;
+import be_viemp3.viemp3.repository.auth.RoleRepository;
 import be_viemp3.viemp3.repository.music.GenreRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;

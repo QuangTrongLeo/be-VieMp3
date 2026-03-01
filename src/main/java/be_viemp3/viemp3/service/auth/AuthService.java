@@ -19,7 +19,7 @@ public class AuthService {
 
     // Đăng ký
     public void register(RegisterRequest request) {
-        userService.createUser(request.getUsername(), request.getEmail(), request.getPassword());
+        userService.createUser(request);
         otpService.createAndSendOtp(request.getEmail());
     }
 

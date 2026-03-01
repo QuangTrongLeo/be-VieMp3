@@ -1,13 +1,10 @@
 package be_viemp3.viemp3.service.music;
 
-import be_viemp3.viemp3.dto.request.music.song.AddSongToAlbumRequest;
+import be_viemp3.viemp3.common.service.EntityQueryService;
 import be_viemp3.viemp3.dto.request.music.song.CreateSongRequest;
 import be_viemp3.viemp3.dto.request.music.song.UpdateSongRequest;
 import be_viemp3.viemp3.dto.response.music.SongResponse;
-import be_viemp3.viemp3.entity.Album;
-import be_viemp3.viemp3.entity.Artist;
-import be_viemp3.viemp3.entity.Genre;
-import be_viemp3.viemp3.entity.Song;
+import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.mapper.music.SongMapper;
 import be_viemp3.viemp3.repository.music.SongRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
@@ -20,15 +17,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SongService {
     private final SongRepository songRepository;
-    private final AlbumService albumService;
-    private final ArtistService artistService;
-    private final GenreService genreService;
+    private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;
 
     // ===== CREATE =====
     public SongResponse createSong(CreateSongRequest request) {
-        Artist artist = artistService.findArtistById(request.getArtistId());
-        Genre genre = genreService.findGenreById(request.getGenreId());
+        Artist artist = entityQueryService.findArtistById(request.getArtistId());
+        Genre genre = entityQueryService.findGenreById(request.getGenreId());
 
         String coverUrl = fileStorageService.upload(request.getCover(), "songs/covers");
         String audioUrl = fileStorageService.upload(request.getAudio(), "songs/audios");
@@ -46,20 +41,9 @@ public class SongService {
         return SongMapper.toResponse(song);
     }
 
-    // ===== ADD SONG TO ALBUM =====
-    public void addSongToAlbum(AddSongToAlbumRequest request) {
-        Song song = findSongById(request.getSongId());
-        Album album = albumService.findAlbumById(request.getAlbumId());
-        validateSameArtist(song, album);
-        if (album.equals(song.getAlbum())) {
-            return;
-        }
-        song.setAlbum(album);
-    }
-
     // ===== UPDATE =====
     public SongResponse updateSong(UpdateSongRequest request) {
-        Song song = findSongById(request.getSongId());
+        Song song = entityQueryService.findSongById(request.getSongId());
         boolean isUpdated = false;
 
         // ===== Title =====
@@ -74,13 +58,13 @@ public class SongService {
         }
         // ===== Genre =====
         if (request.getGenreId() != null) {
-            Genre genre = genreService.findGenreById(request.getGenreId());
+            Genre genre = entityQueryService.findGenreById(request.getGenreId());
             song.setGenre(genre);
             isUpdated = true;
         }
         // ===== Album =====
         if (request.getAlbumId() != null) {
-            Album album = albumService.findAlbumById(request.getAlbumId());
+            Album album = entityQueryService.findAlbumById(request.getAlbumId());
             if (!album.getArtist().getId().equals(song.getArtist().getId())) {
                 throw new IllegalArgumentException("Album không thuộc cùng nghệ sĩ");
             }
@@ -115,7 +99,7 @@ public class SongService {
 
     // ===== DELETE =====
     public void deleteSong(String songId) {
-        Song song = findSongById(songId);
+        Song song = entityQueryService.findSongById(songId);
         if (song.getCover() != null) {
             fileStorageService.deleteByUrl(song.getCover());
         }
@@ -125,18 +109,9 @@ public class SongService {
         songRepository.delete(song);
     }
 
-    // ===== REMOVE SONG FROM ALBUM =====
-    public void removeSongFromAlbum(String songId) {
-        Song song = findSongById(songId);
-        if (song.getAlbum() == null) {
-            throw new IllegalStateException("Bài hát chưa thuộc album nào");
-        }
-        song.setAlbum(null);
-    }
-
     // ===== GET BY ID =====
     public SongResponse getSongById(String songId) {
-        return SongMapper.toResponse(findSongById(songId));
+        return SongMapper.toResponse(entityQueryService.findSongById(songId));
     }
 
     // ===== GET ALL =====
@@ -144,30 +119,24 @@ public class SongService {
         return SongMapper.toResponseList(songRepository.findAll());
     }
 
-    // ===== GET ALL BY ARTIST =====
+    // ===== GET SONGS BY ARTIST =====
     public List<SongResponse> getSongsByArtist(String artistId) {
-        artistService.findArtistById(artistId);
+        entityQueryService.findArtistById(artistId);
         List<Song> songs = songRepository.findByArtistId(artistId);
         return SongMapper.toResponseList(songs);
     }
 
-    // ===== GET ALL BY ALBUM =====
+    // ===== GET SONGS BY ALBUM =====
     public List<SongResponse> getSongsByAlbum(String albumId) {
-        albumService.findAlbumById(albumId);
+        entityQueryService.findAlbumById(albumId);
         List<Song> songs = songRepository.findByAlbumId(albumId);
         return SongMapper.toResponseList(songs);
     }
 
-    // ===== SUPPORT METHOD =====
-    public Song findSongById(String id) {
-        return songRepository.findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Bài hát không tồn tại với id: " + id));
-    }
-
-    private void validateSameArtist(Song song, Album album) {
-        if (!song.getArtist().getId().equals(album.getArtist().getId())) {
-            throw new IllegalArgumentException("Song và Album không cùng nghệ sĩ");
-        }
+    // ===== GET SONGS BY PLAYLIST =====
+    public List<SongResponse> getSongsByPlaylist(String playlistId) {
+        Playlist playlist = entityQueryService.findPlaylistById(playlistId);
+        List<Song> songs = playlist.getSongs();
+        return SongMapper.toResponseList(songs);
     }
 }

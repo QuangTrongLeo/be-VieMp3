@@ -1,5 +1,6 @@
 package be_viemp3.viemp3.service.music;
 
+import be_viemp3.viemp3.common.service.EntityQueryService;
 import be_viemp3.viemp3.dto.request.music.genre.CreateGenreRequest;
 import be_viemp3.viemp3.dto.request.music.genre.UpdateGenreRequest;
 import be_viemp3.viemp3.dto.response.music.GenreResponse;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 public class GenreService {
 
     private final GenreRepository genreRepository;
+    private final EntityQueryService entityQueryService;
 
     // CREATE GENRE
     public GenreResponse createGenre(CreateGenreRequest request) {
@@ -40,12 +42,12 @@ public class GenreService {
 
     // GET GENRE BY ID
     public GenreResponse getGenreById(String id) {
-        return GenreMapper.toResponse(findGenreById(id));
+        return GenreMapper.toResponse(entityQueryService.findGenreById(id));
     }
 
     // UPDATE GENRE
     public GenreResponse updateGenre(UpdateGenreRequest request) {
-        Genre genre = findGenreById(request.getGenreId());
+        Genre genre = entityQueryService.findGenreById(request.getGenreId());
         GenreEnum newGenre = request.getName();
         if (!genre.getName().equals(newGenre) && genreRepository.existsByName(newGenre)) {
             throw new IllegalArgumentException("Genre đã tồn tại: " + newGenre);
@@ -57,17 +59,10 @@ public class GenreService {
 
     // DELETE GENRE
     public void deleteGenre(String id) {
-        Genre genre = findGenreById(id);
+        Genre genre = entityQueryService.findGenreById(id);
         if (genre.getSongs() != null && !genre.getSongs().isEmpty()) {
             throw new IllegalStateException("Không thể xóa Genre đang chứa bài hát");
         }
         genreRepository.delete(genre);
-    }
-
-    // FIND GENRE BY ID
-    public Genre findGenreById(String id) {
-        return genreRepository.findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Genre không tồn tại với id: " + id));
     }
 }

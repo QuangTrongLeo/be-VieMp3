@@ -1,4 +1,4 @@
-package be_viemp3.viemp3.repository.user;
+package be_viemp3.viemp3.repository.auth;
 
 import be_viemp3.viemp3.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

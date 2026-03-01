@@ -1,10 +1,13 @@
 package be_viemp3.viemp3.service.music;
 
+import be_viemp3.viemp3.common.service.EntityQueryService;
+import be_viemp3.viemp3.dto.request.music.album.AddSongToAlbumRequest;
 import be_viemp3.viemp3.dto.request.music.album.CreateAlbumRequest;
 import be_viemp3.viemp3.dto.request.music.album.UpdateAlbumRequest;
 import be_viemp3.viemp3.dto.response.music.AlbumResponse;
 import be_viemp3.viemp3.entity.Album;
 import be_viemp3.viemp3.entity.Artist;
+import be_viemp3.viemp3.entity.Song;
 import be_viemp3.viemp3.mapper.music.AlbumMapper;
 import be_viemp3.viemp3.repository.music.AlbumRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
@@ -17,12 +20,12 @@ import java.util.List;
 public class AlbumService {
 
     private final AlbumRepository albumRepository;
-    private final ArtistService artistService;
+    private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;
 
     // ===== CREATE =====
     public AlbumResponse createAlbum(CreateAlbumRequest request) {
-        Artist artist = artistService.findArtistById(request.getArtistId());
+        Artist artist = entityQueryService.findArtistById(request.getArtistId());
         String coverUrl = fileStorageService.upload(request.getCover(), "albums");
         Album album = new Album();
         album.setTitle(request.getTitle().trim());
@@ -34,7 +37,7 @@ public class AlbumService {
 
     // ===== UPDATE =====
     public AlbumResponse updateAlbum(UpdateAlbumRequest request) {
-        Album album = findAlbumById(request.getAlbumId());
+        Album album = entityQueryService.findAlbumById(request.getAlbumId());
         boolean isUpdated = false;
         // update title
         if (request.getTitle() != null && !request.getTitle().isBlank()) {
@@ -59,16 +62,36 @@ public class AlbumService {
 
     // ===== DELETE =====
     public void deleteAlbum(String albumId) {
-        Album album = findAlbumById(albumId);
+        Album album = entityQueryService.findAlbumById(albumId);
         if (album.getCover() != null) {
             fileStorageService.deleteByUrl(album.getCover());
         }
         albumRepository.delete(album);
     }
 
+    // ===== ADD SONG TO ALBUM =====
+    public void addSongToAlbum(AddSongToAlbumRequest request) {
+        Song song = entityQueryService.findSongById(request.getSongId());
+        Album album = entityQueryService.findAlbumById(request.getAlbumId());
+        validateSameArtist(song, album);
+        if (album.equals(song.getAlbum())) {
+            return;
+        }
+        song.setAlbum(album);
+    }
+
+    // ===== REMOVE SONG FROM ALBUM =====
+    public void removeSongFromAlbum(String songId) {
+        Song song = entityQueryService.findSongById(songId);
+        if (song.getAlbum() == null) {
+            throw new IllegalStateException("Bài hát chưa thuộc album nào");
+        }
+        song.setAlbum(null);
+    }
+
     // ===== GET BY ID =====
     public AlbumResponse getAlbumById(String albumId) {
-        return AlbumMapper.toResponse(findAlbumById(albumId));
+        return AlbumMapper.toResponse(entityQueryService.findAlbumById(albumId));
     }
 
     // ===== GET ALL =====
@@ -77,9 +100,9 @@ public class AlbumService {
     }
 
     // ===== SUPPORT METHOD =====
-    public Album findAlbumById(String id) {
-        return albumRepository.findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Album không tồn tại"));
+    private void validateSameArtist(Song song, Album album) {
+        if (!song.getArtist().getId().equals(album.getArtist().getId())) {
+            throw new IllegalArgumentException("Song và Album không cùng nghệ sĩ");
+        }
     }
 }

@@ -13,8 +13,8 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "favorite_songs")
-public class FavoriteSong {
+@Table(name = "favorite_artists")
+public class FavoriteArtist {
     @Id
     @GeneratedValue
     @UuidGenerator
@@ -26,8 +26,8 @@ public class FavoriteSong {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "song_id")
-    private Song song;
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

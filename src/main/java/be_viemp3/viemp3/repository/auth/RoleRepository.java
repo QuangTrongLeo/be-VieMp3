@@ -1,4 +1,4 @@
-package be_viemp3.viemp3.repository.user;
+package be_viemp3.viemp3.repository.auth;
 
 import be_viemp3.viemp3.entity.Role;
 import be_viemp3.viemp3.enums.RoleEnum;

@@ -1,4 +1,4 @@
-package be_viemp3.viemp3.dto.request.music.song;
+package be_viemp3.viemp3.dto.request.music.album;
 
 import lombok.Data;
 

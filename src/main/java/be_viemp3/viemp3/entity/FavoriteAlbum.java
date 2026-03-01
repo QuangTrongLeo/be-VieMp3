@@ -4,14 +4,17 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
+
+import java.time.OffsetDateTime;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "follow_artists")
-public class FollowArtist {
+@Table(name = "favorite_albums")
+public class FavoriteAlbum {
     @Id
     @GeneratedValue
     @UuidGenerator
@@ -19,11 +22,14 @@ public class FollowArtist {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "artist_id")
-    private Artist artist;
-}
+    @JoinColumn(name = "album_id", nullable = false)
+    private Album album;
 
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime favoritedAt;
+}

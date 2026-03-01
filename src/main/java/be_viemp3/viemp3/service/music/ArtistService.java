@@ -1,5 +1,6 @@
 package be_viemp3.viemp3.service.music;
 
+import be_viemp3.viemp3.common.service.EntityQueryService;
 import be_viemp3.viemp3.dto.request.music.artist.CreateAristRequest;
 import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistRequest;
 import be_viemp3.viemp3.dto.response.music.ArtistResponse;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArtistService {
     private final ArtistRepository artistRepository;
+    private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;
 
     // ===== CREATE =====
@@ -31,7 +33,7 @@ public class ArtistService {
 
     // ===== UPDATE =====
     public ArtistResponse updateArtist(UpdateArtistRequest request) {
-        Artist artist = findArtistById(request.getArtistId());
+        Artist artist = entityQueryService.findArtistById(request.getArtistId());
         boolean isUpdated = false;
 
         // ===== UPDATE NAME =====
@@ -60,7 +62,7 @@ public class ArtistService {
 
     // ===== DELETE =====
     public void deleteArtistById(String artistId) {
-        Artist artist = findArtistById(artistId);
+        Artist artist = entityQueryService.findArtistById(artistId);
         // xóa file avatar
         fileStorageService.deleteByUrl(artist.getAvatar());
         artistRepository.delete(artist);
@@ -78,12 +80,5 @@ public class ArtistService {
     // ===== GET ALL =====
     public List<ArtistResponse> getAllArtists() {
         return ArtistMapper.toResponseList(artistRepository.findAll());
-    }
-
-    // ===== GET BY ID =====
-    public Artist findArtistById(String id) {
-        return artistRepository.findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Nghệ sĩ không tồn tại với id: " + id));
     }
 }

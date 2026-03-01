@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.music.song.AddSongToAlbumRequest;
+import be_viemp3.viemp3.dto.request.music.album.AddSongToAlbumRequest;
 import be_viemp3.viemp3.dto.request.music.song.CreateSongRequest;
 import be_viemp3.viemp3.dto.request.music.song.UpdateSongRequest;
 import be_viemp3.viemp3.dto.response.music.SongResponse;
@@ -35,19 +35,6 @@ public class SongController {
         );
     }
 
-    // ===== ADD SONG TO ALBUM =====
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @PutMapping("/album")
-    public ResponseEntity<ApiResponse<Void>> addSongToAlbum(@RequestBody AddSongToAlbumRequest request) {
-        songService.addSongToAlbum(request);
-        return ResponseEntity.ok(
-                ApiResponse.<Void>builder()
-                        .success(true)
-                        .message("Thêm bài hát vào album thành công")
-                        .build()
-        );
-    }
-
     // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -71,19 +58,6 @@ public class SongController {
                 ApiResponse.<Void>builder()
                         .success(true)
                         .message("Xóa bài hát thành công")
-                        .build()
-        );
-    }
-
-    // ===== REMOVE SONG FROM ALBUM =====
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @DeleteMapping("/{songId}/album")
-    public ResponseEntity<ApiResponse<Void>> removeSongFromAlbum(@PathVariable String songId) {
-        songService.removeSongFromAlbum(songId);
-        return ResponseEntity.ok(
-                ApiResponse.<Void>builder()
-                        .success(true)
-                        .message("Đã xóa bài hát khỏi album")
                         .build()
         );
     }
@@ -140,6 +114,19 @@ public class SongController {
                         .success(true)
                         .message("Lấy danh sách bài hát theo nghệ sĩ thành công")
                         .data(response)
+                        .build()
+        );
+    }
+
+    @PreAuthorize("hasAnyRole('USER')")
+    @GetMapping("/playlist/{playlistId}")
+    public ResponseEntity<ApiResponse<List<SongResponse>>> getSongsByPlaylist(@PathVariable String playlistId) {
+        List<SongResponse> songs = songService.getSongsByPlaylist(playlistId);
+        return ResponseEntity.ok(
+                ApiResponse.<List<SongResponse>>builder()
+                        .success(true)
+                        .message("Lấy danh sách bài hát theo playlist thành công")
+                        .data(songs)
                         .build()
         );
     }
