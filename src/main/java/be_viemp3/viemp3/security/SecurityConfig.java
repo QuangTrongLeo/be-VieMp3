@@ -28,6 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> {})
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -37,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(baseUrl + "/albums/**").permitAll()
                         .requestMatchers(baseUrl + "/genres/**").permitAll()
                         .requestMatchers(baseUrl + "/songs/**").permitAll()
+                        .requestMatchers(baseUrl + "/users/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter,
