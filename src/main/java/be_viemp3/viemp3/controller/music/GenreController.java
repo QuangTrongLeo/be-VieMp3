@@ -16,7 +16,6 @@ import java.util.List;
 @RequestMapping("${api.vie-mp3-url}/genres")
 @RequiredArgsConstructor
 public class GenreController {
-
     private final GenreService genreService;
 
     // ===== CREATE =====

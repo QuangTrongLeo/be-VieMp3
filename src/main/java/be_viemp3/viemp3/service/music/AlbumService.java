@@ -18,7 +18,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AlbumService {
-
     private final AlbumRepository albumRepository;
     private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;

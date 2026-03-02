@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class GenreService {
-
     private final GenreRepository genreRepository;
     private final EntityQueryService entityQueryService;
 

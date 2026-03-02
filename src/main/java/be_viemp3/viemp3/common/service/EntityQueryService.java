@@ -1,6 +1,9 @@
 package be_viemp3.viemp3.common.service;
 
 import be_viemp3.viemp3.entity.*;
+import be_viemp3.viemp3.enums.RoleEnum;
+import be_viemp3.viemp3.repository.auth.RoleRepository;
+import be_viemp3.viemp3.repository.auth.UserRepository;
 import be_viemp3.viemp3.repository.music.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,8 @@ public class EntityQueryService {
     private final GenreRepository genreRepository;
     private final PlaylistRepository playlistRepository;
     private final SongRepository songRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     // ===== ALBUM =====
     public Album findAlbumById(String id) {
@@ -42,11 +47,23 @@ public class EntityQueryService {
                         new IllegalArgumentException("Playlist không tồn tại"));
     }
 
-
     // ===== SONG =====
     public Song findSongById(String id) {
         return songRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Bài hát không tồn tại với id: " + id));
+    }
+
+    // ===== USER =====
+    public User findUserById(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("User không tồn tại với id: " + id));
+    }
+
+    // ===== ROLE =====
+    public Role findRoleByName(RoleEnum role) {
+        return roleRepository.findByName(role)
+                .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
     }
 }

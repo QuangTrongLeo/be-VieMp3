@@ -2,6 +2,7 @@ package be_viemp3.viemp3.controller.auth;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
 import be_viemp3.viemp3.dto.request.auth.UpdateProfileRequest;
+import be_viemp3.viemp3.dto.request.auth.UpdateUserRoleRequest;
 import be_viemp3.viemp3.dto.response.auth.UserResponse;
 import be_viemp3.viemp3.service.auth.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ import java.util.List;
 @RequestMapping("${api.vie-mp3-url}/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
 
     // ===== GET MY PROFILE =====
@@ -56,6 +56,19 @@ public class UserController {
                         .success(true)
                         .message("Lấy danh sách user thành công")
                         .data(responses)
+                        .build()
+        );
+    }
+
+    // ===== UPDATE ROLE FOR USER =====
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/roles")
+    public ResponseEntity<ApiResponse<Void>> updateUserRoles(@RequestBody UpdateUserRoleRequest request) {
+        userService.updateUserRoles(request);
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Cập nhật role cho user thành công")
                         .build()
         );
     }

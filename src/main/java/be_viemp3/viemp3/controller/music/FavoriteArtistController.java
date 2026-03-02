@@ -1,6 +1,7 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
+import be_viemp3.viemp3.dto.response.music.FavoriteArtistResponse;
 import be_viemp3.viemp3.service.music.FavoriteArtistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,6 @@ import java.util.List;
 @RequestMapping("${api.vie-mp3-url}/favorite-artists")
 @RequiredArgsConstructor
 public class FavoriteArtistController {
-
     private final FavoriteArtistService favoriteArtistService;
 
     @PreAuthorize("hasRole('USER')")

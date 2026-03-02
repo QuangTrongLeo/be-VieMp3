@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("${api.vie-mp3-url}/roles")
 @RequiredArgsConstructor
 public class RoleController {
-
     private final RoleService roleService;
 
     @PreAuthorize("hasRole('ADMIN')")

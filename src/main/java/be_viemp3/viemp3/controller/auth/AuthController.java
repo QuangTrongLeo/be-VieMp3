@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${api.vie-mp3-url}/auth")
 @RequiredArgsConstructor
 public class AuthController {
-
     private final AuthService authService;
 
     // ===== REGISTER =====

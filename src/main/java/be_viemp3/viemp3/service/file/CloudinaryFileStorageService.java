@@ -13,20 +13,15 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class CloudinaryFileStorageService implements FileStorageService {
-
     private final Cloudinary cloudinary;
 
     @Override
     public String upload(MultipartFile file, String folder) {
-
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File không được để trống");
         }
-
         try {
-
             String publicId = folder + "/" + UUID.randomUUID();
-
             Map uploadResult = cloudinary.uploader().upload(
                     file.getBytes(),
                     ObjectUtils.asMap(
@@ -34,9 +29,7 @@ public class CloudinaryFileStorageService implements FileStorageService {
                             "resource_type", "auto"   // auto detect image / video / mp3
                     )
             );
-
             return uploadResult.get("secure_url").toString();
-
         } catch (IOException e) {
             throw new IllegalStateException("Upload lên Cloudinary thất bại", e);
         }
@@ -44,9 +37,7 @@ public class CloudinaryFileStorageService implements FileStorageService {
 
     @Override
     public void deleteByUrl(String fileUrl) {
-
         if (fileUrl == null || fileUrl.isEmpty()) return;
-
         try {
             String publicId = extractPublicId(fileUrl);
             cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());

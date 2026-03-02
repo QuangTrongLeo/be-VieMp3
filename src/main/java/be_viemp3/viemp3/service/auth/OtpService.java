@@ -3,6 +3,7 @@ package be_viemp3.viemp3.service.auth;
 import be_viemp3.viemp3.entity.VerificationToken;
 import be_viemp3.viemp3.common.exception.VerifyOtpException;
 import be_viemp3.viemp3.repository.auth.VerificationTokenRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Service;
@@ -12,19 +13,12 @@ import java.time.ZoneId;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class OtpService {
-
-    @Autowired
-    private VerificationTokenRepository verificationTokenRepository;
-
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private TaskScheduler taskScheduler;
+    private final VerificationTokenRepository verificationTokenRepository;
+    private final EmailService emailService;
+    private final UserService userService;
+    private final TaskScheduler taskScheduler;
 
     // TẠO VÀ GỬI OTP
     public void createAndSendOtp(String email) {

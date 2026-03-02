@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("${api.vie-mp3-url}/favorite-albums")
 @RequiredArgsConstructor
 public class FavoriteAlbumController {
-
     private final FavoriteAlbumService favoriteAlbumService;
 
     @PreAuthorize("hasRole('USER')")

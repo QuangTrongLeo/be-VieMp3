@@ -2,7 +2,7 @@ package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
 import be_viemp3.viemp3.common.util.SecurityUtils;
-import be_viemp3.viemp3.controller.music.FavoriteArtistResponse;
+import be_viemp3.viemp3.dto.response.music.FavoriteArtistResponse;
 import be_viemp3.viemp3.entity.Artist;
 import be_viemp3.viemp3.entity.FavoriteArtist;
 import be_viemp3.viemp3.entity.User;

@@ -82,6 +82,5 @@ public class AccountInitializer implements CommandLineRunner {
             user.getRoles().add(adminRole);
         }
         userRepository.save(user);
-        System.out.println(roleEnum + " account created successfully!");
     }
 }

@@ -16,7 +16,6 @@ import java.util.List;
 @RequestMapping("${api.vie-mp3-url}/artists")
 @RequiredArgsConstructor
 public class ArtistController {
-
     private final ArtistService artistService;
 
     // ===== CREATE =====

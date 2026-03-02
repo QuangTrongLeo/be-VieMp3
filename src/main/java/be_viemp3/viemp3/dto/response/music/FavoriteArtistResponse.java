@@ -1,6 +1,5 @@
-package be_viemp3.viemp3.controller.music;
+package be_viemp3.viemp3.dto.response.music;
 
-import be_viemp3.viemp3.dto.response.music.ArtistResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

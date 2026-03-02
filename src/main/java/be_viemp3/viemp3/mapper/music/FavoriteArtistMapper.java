@@ -1,6 +1,6 @@
 package be_viemp3.viemp3.mapper.music;
 
-import be_viemp3.viemp3.controller.music.FavoriteArtistResponse;
+import be_viemp3.viemp3.dto.response.music.FavoriteArtistResponse;
 import be_viemp3.viemp3.entity.FavoriteArtist;
 
 import java.util.List;

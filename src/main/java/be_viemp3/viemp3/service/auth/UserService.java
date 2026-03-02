@@ -1,8 +1,10 @@
 package be_viemp3.viemp3.service.auth;
 
+import be_viemp3.viemp3.common.service.EntityQueryService;
 import be_viemp3.viemp3.common.util.SecurityUtils;
 import be_viemp3.viemp3.dto.request.auth.RegisterRequest;
 import be_viemp3.viemp3.dto.request.auth.UpdateProfileRequest;
+import be_viemp3.viemp3.dto.request.auth.UpdateUserRoleRequest;
 import be_viemp3.viemp3.dto.response.auth.UserResponse;
 import be_viemp3.viemp3.entity.Role;
 import be_viemp3.viemp3.entity.User;
@@ -12,24 +14,24 @@ import be_viemp3.viemp3.mapper.auth.UserMapper;
 import be_viemp3.viemp3.repository.auth.RoleRepository;
 import be_viemp3.viemp3.repository.auth.UserRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private SecurityUtils securityUtils;
-    @Autowired
-    private FileStorageService fileStorageService;
+    private final UserRepository userRepository;
+    private final RoleService roleService;
+    private final FileStorageService fileStorageService;
+    private final EntityQueryService entityQueryService;
+    private final PasswordEncoder passwordEncoder;
+    private final SecurityUtils securityUtils;
 
     // Tạo user chưa kích hoạt
     public void createUser(RegisterRequest request) {
@@ -89,6 +91,15 @@ public class UserService {
         return UserMapper.toResponse(currentUser);
     }
 
+    // ===== UPDATE ROLE FOR USER =====
+    public void updateUserRoles(UpdateUserRoleRequest request) {
+        User user = entityQueryService.findUserById(request.getUserId());
+        Set<RoleEnum> normalizedRoles = roleService.normalizeRoles(request.getRoles());
+        Set<Role> roles = roleService.getRolesFromEnums(normalizedRoles);
+        user.setRoles(roles);
+        userRepository.save(user);
+    }
+
     // ===== GET ALL USER =====
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
@@ -107,9 +118,7 @@ public class UserService {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setEnabled(false);
-
-        Role roleUser = roleRepository.findByName(RoleEnum.USER)
-                .orElseThrow(() -> new RuntimeException("Role USER không tồn tại!"));
+        Role roleUser = entityQueryService.findRoleByName(RoleEnum.USER);
         user.getRoles().add(roleUser);
         return user;
     }
