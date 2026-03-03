@@ -16,8 +16,8 @@ public class ArtistMapper {
         response.setId(artist.getId());
         response.setName(artist.getName());
         response.setAvatar(artist.getAvatar());
-        int actualFollowers = (artist.getFollowArtists() != null) ? artist.getFollowArtists().size() : 0;
-        response.setFollowers(100000 + actualFollowers);
+        response.setFavorites(artist.getFavorites());
+        response.setCreatedAt(artist.getCreatedAt());
         return response;
     }
 

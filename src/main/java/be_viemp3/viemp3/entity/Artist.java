@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import java.time.OffsetDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -18,9 +21,14 @@ public class Artist {
     @UuidGenerator
     @Column(nullable = false, updatable = false)
     private String id;
-
     private String name;
     private String avatar;
+    @Column(nullable = false)
+    private int favorites = 100000;
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Album> albums;
@@ -29,6 +37,6 @@ public class Artist {
     private List<Song> songs;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FavoriteArtist> followArtists;
+    private List<FavoriteArtist> favoriteArtists;
 }
 

@@ -61,9 +61,9 @@ public class ArtistController {
 
     // ===== GET BY NAME =====
     @PreAuthorize("permitAll()")
-    @GetMapping("/{artistName}")
-    public ResponseEntity<ApiResponse<ArtistResponse>> getArtistByName(@PathVariable String artistName) {
-        ArtistResponse response = artistService.getArtistByName(artistName);
+    @GetMapping
+    public ResponseEntity<ApiResponse<ArtistResponse>> getArtistByName(@RequestParam String name) {
+        ArtistResponse response = artistService.getArtistByName(name);
         return ResponseEntity.ok(
                 ApiResponse.<ArtistResponse>builder()
                         .success(true)

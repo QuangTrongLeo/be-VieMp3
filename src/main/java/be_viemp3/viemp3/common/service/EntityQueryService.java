@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class EntityQueryService {
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
+    private final FavoriteArtistRepository favoriteArtistRepository;
     private final GenreRepository genreRepository;
     private final PlaylistRepository playlistRepository;
     private final SongRepository songRepository;
@@ -31,6 +32,21 @@ public class EntityQueryService {
         return artistRepository.findById(id)
                 .orElseThrow(() ->
                         new IllegalArgumentException("Nghệ sĩ không tồn tại với id: " + id));
+    }
+
+    public Artist findArtistByName(String artistName) {
+        return artistRepository
+                .findByNameContainingIgnoreCase(artistName)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Nghệ sĩ không tồn tại"));
+    }
+
+    public FavoriteArtist findFavoriteArtist(String userId, String artistId) {
+        return favoriteArtistRepository
+                .findByUserIdAndArtistId(userId, artistId)
+                .orElseThrow(() ->
+                        new IllegalStateException("Artist không tồn tại trong danh sách yêu thích")
+                );
     }
 
     // ===== GENRE =====

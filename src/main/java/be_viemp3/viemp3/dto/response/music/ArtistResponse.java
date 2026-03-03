@@ -2,10 +2,13 @@ package be_viemp3.viemp3.dto.response.music;
 
 import lombok.Data;
 
+import java.time.OffsetDateTime;
+
 @Data
 public class ArtistResponse {
     private String id;
     private String name;
     private String avatar;
-    private int followers;
+    private int favorites;
+    private OffsetDateTime createdAt;
 }

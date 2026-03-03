@@ -9,7 +9,9 @@ import be_viemp3.viemp3.mapper.music.ArtistMapper;
 import be_viemp3.viemp3.repository.music.ArtistRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.*;
 import java.util.List;
@@ -23,12 +25,20 @@ public class ArtistService {
 
     // ===== CREATE =====
     public ArtistResponse createArtist(CreateAristRequest request) {
-        String avatarUrl = fileStorageService.upload(request.getAvatar(), "artists");
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new IllegalArgumentException("Tên nghệ sĩ không được để trống");
+        }
+        String avatarUrl = null;
+        // Chỉ upload nếu có file
+        if (request.getAvatar() != null && !request.getAvatar().isEmpty()) {
+            avatarUrl = fileStorageService.upload(request.getAvatar(), "artists");
+        }
         Artist artist = new Artist();
         artist.setName(request.getName().trim());
         artist.setAvatar(avatarUrl);
-        artistRepository.save(artist);
-        return ArtistMapper.toResponse(artist);
+        artist.setFavorites(100000);
+        Artist savedArtist = artistRepository.save(artist);
+        return ArtistMapper.toResponse(savedArtist);
     }
 
     // ===== UPDATE =====
@@ -70,10 +80,7 @@ public class ArtistService {
 
     // ===== GET BY NAME =====
     public ArtistResponse getArtistByName(String artistName) {
-        Artist artist = artistRepository.findByName(artistName);
-        if (artist == null) {
-            throw new IllegalArgumentException("Không tìm thấy nghệ sĩ: " + artistName);
-        }
+        Artist artist = entityQueryService.findArtistByName(artistName);
         return ArtistMapper.toResponse(artist);
     }
 
