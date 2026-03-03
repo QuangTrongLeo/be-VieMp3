@@ -3,6 +3,8 @@ package be_viemp3.viemp3.dto.response.music;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.OffsetDateTime;
+
 @Data
 @Builder
 public class SongResponse {
@@ -14,4 +16,6 @@ public class SongResponse {
     private String artistId;
     private String albumId;
     private String genreId;
+    private int favorites;
+    private OffsetDateTime createdAt;
 }

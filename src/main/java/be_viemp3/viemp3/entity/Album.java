@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Entity
@@ -19,9 +21,13 @@ public class Album {
     @UuidGenerator
     @Column(nullable = false, updatable = false)
     private String id;
-
     private String title;
     private String cover;
+    @Column(nullable = false)
+    private int favorites = 0;
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "artist_id")

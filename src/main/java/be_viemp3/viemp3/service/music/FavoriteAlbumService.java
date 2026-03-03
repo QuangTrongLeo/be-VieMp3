@@ -7,7 +7,9 @@ import be_viemp3.viemp3.entity.Album;
 import be_viemp3.viemp3.entity.FavoriteAlbum;
 import be_viemp3.viemp3.entity.User;
 import be_viemp3.viemp3.mapper.music.FavoriteAlbumMapper;
+import be_viemp3.viemp3.repository.music.AlbumRepository;
 import be_viemp3.viemp3.repository.music.FavoriteAlbumRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,33 +18,32 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FavoriteAlbumService {
+    private final AlbumRepository albumRepository;
     private final FavoriteAlbumRepository favoriteAlbumRepository;
     private final EntityQueryService entityQueryService;
     private final SecurityUtils securityUtils;
 
     // ===== ADD ALBUM TO FAVORITE =====
+    @Transactional
     public void addAlbumToFavorite(String albumId) {
         User currentUser = securityUtils.getCurrentUser();
         Album album = entityQueryService.findAlbumById(albumId);
         boolean exists = favoriteAlbumRepository.existsByUserIdAndAlbumId(currentUser.getId(), albumId);
-        if (exists) {
-            return;
-        }
+        if (exists) return;
         FavoriteAlbum favoriteAlbum = new FavoriteAlbum();
         favoriteAlbum.setUser(currentUser);
         favoriteAlbum.setAlbum(album);
         favoriteAlbumRepository.save(favoriteAlbum);
+        albumRepository.incrementFavorites(albumId);
     }
 
     // ===== REMOVE ALBUM FROM FAVORITE =====
+    @Transactional
     public void removeAlbumFromFavorite(String albumId) {
         User currentUser = securityUtils.getCurrentUser();
-        FavoriteAlbum favoriteAlbum = favoriteAlbumRepository
-                .findByUserIdAndAlbumId(currentUser.getId(), albumId)
-                .orElseThrow(() ->
-                        new IllegalStateException("Album không tồn tại trong danh sách yêu thích")
-                );
+        FavoriteAlbum favoriteAlbum = entityQueryService.findFavoriteAlbum(currentUser.getId(), albumId);
         favoriteAlbumRepository.delete(favoriteAlbum);
+        albumRepository.decrementFavorites(albumId);
     }
 
     // ===== GET MY FAVORITE ALBUMS =====

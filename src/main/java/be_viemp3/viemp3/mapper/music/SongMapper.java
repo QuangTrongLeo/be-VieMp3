@@ -22,6 +22,8 @@ public class SongMapper {
                 .artistId(song.getArtist() != null ? song.getArtist().getId() : null)
                 .albumId(song.getAlbum() != null ? song.getAlbum().getId() : null)
                 .genreId(song.getGenre() != null ? song.getGenre().getId() : null)
+                .favorites(song.getFavorites())
+                .createdAt(song.getCreatedAt())
                 .build();
     }
 

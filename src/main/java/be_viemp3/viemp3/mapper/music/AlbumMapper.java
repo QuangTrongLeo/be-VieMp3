@@ -11,11 +11,14 @@ public class AlbumMapper {
         if (album == null) {
             return null;
         }
+
         return AlbumResponse.builder()
                 .id(album.getId())
                 .title(album.getTitle())
                 .cover(album.getCover())
                 .artistId(album.getArtist() != null ? album.getArtist().getId() : null)
+                .favorites(album.getFavorites())
+                .createdAt(album.getCreatedAt())
                 .build();
     }
 
@@ -23,6 +26,7 @@ public class AlbumMapper {
         if (albums == null) {
             return List.of();
         }
+
         return albums.stream()
                 .map(AlbumMapper::toResponse)
                 .collect(Collectors.toList());
