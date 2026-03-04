@@ -20,7 +20,7 @@ public class GenreController {
 
     // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @PostMapping
+    @PostMapping("/all")
     public ResponseEntity<ApiResponse<GenreResponse>> createGenre(@RequestBody @Valid CreateGenreRequest request) {
         GenreResponse response = genreService.createGenre(request);
         return ResponseEntity.ok(
@@ -34,7 +34,7 @@ public class GenreController {
 
     // ===== GET ALL =====
     @PreAuthorize("permitAll()")
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<GenreResponse>>> getAllGenres() {
         List<GenreResponse> response = genreService.genres();
         return ResponseEntity.ok(

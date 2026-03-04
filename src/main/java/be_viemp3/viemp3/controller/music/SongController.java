@@ -1,7 +1,6 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.music.album.AddSongToAlbumRequest;
 import be_viemp3.viemp3.dto.request.music.song.CreateSongRequest;
 import be_viemp3.viemp3.dto.request.music.song.UpdateSongRequest;
 import be_viemp3.viemp3.dto.response.music.SongResponse;
@@ -112,6 +111,20 @@ public class SongController {
                 ApiResponse.<List<SongResponse>>builder()
                         .success(true)
                         .message("Lấy danh sách bài hát theo nghệ sĩ thành công")
+                        .data(response)
+                        .build()
+        );
+    }
+
+    // ===== GET SONGS BY GENRE =====
+    @PreAuthorize("permitAll()")
+    @GetMapping("/genre/{genreId}")
+    public ResponseEntity<ApiResponse<List<SongResponse>>> getSongsByGenre(@PathVariable String genreId) {
+        List<SongResponse> response = songService.getSongsByGenre(genreId);
+        return ResponseEntity.ok(
+                ApiResponse.<List<SongResponse>>builder()
+                        .success(true)
+                        .message("Lấy danh sách bài hát theo thể loại thành công")
                         .data(response)
                         .build()
         );

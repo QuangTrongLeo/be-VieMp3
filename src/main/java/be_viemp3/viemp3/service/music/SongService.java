@@ -133,6 +133,13 @@ public class SongService {
         return SongMapper.toResponseList(songs);
     }
 
+    // ===== GET SONGS BY GENRE =====
+    public List<SongResponse> getSongsByGenre(String genreId) {
+        entityQueryService.findGenreById(genreId);
+        List<Song> songs = songRepository.findByGenreId(genreId);
+        return SongMapper.toResponseList(songs);
+    }
+
     // ===== GET SONGS BY PLAYLIST =====
     public List<SongResponse> getSongsByPlaylist(String playlistId) {
         Playlist playlist = entityQueryService.findPlaylistById(playlistId);

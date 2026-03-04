@@ -13,6 +13,7 @@ import java.util.List;
 public interface SongRepository extends JpaRepository<Song, String> {
     List<Song> findByArtistId(String artistId);
     List<Song> findByAlbumId(String albumId);
+    List<Song> findByGenreId(String genreId);
     @Modifying
     @Query("UPDATE Song s SET s.favorites = s.favorites + 1 WHERE s.id = :songId")
     void incrementFavorites(@Param("songId") String songId);
