@@ -59,6 +59,20 @@ public class ArtistController {
         );
     }
 
+    // ===== GET ARTIST =====
+    @PreAuthorize("permitAll()")
+    @GetMapping("/{artistId}")
+    public ResponseEntity<ApiResponse<ArtistResponse>> getArtist(@PathVariable String artistId) {
+        ArtistResponse response = artistService.getArtistById(artistId);
+        return ResponseEntity.ok(
+                ApiResponse.<ArtistResponse>builder()
+                        .success(true)
+                        .message("Lấy thông tin nghệ sĩ thành công")
+                        .data(response)
+                        .build()
+        );
+    }
+
     // ===== GET BY NAME =====
     @PreAuthorize("permitAll()")
     @GetMapping

@@ -98,6 +98,13 @@ public class AlbumService {
         return AlbumMapper.toResponseList(albumRepository.findAll());
     }
 
+    // ===== GET ALL ALBUMS BY ARTIST =====
+    public List<AlbumResponse> getAlbumsByArtist(String artistId) {
+        entityQueryService.findArtistById(artistId);
+        List<Album> albums = albumRepository.findByArtistId(artistId);
+        return AlbumMapper.toResponseList(albums);
+    }
+
     // ===== SUPPORT METHOD =====
     private void validateSameArtist(Song song, Album album) {
         if (!song.getArtist().getId().equals(album.getArtist().getId())) {

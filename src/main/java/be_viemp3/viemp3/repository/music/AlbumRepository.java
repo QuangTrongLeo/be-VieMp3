@@ -7,8 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AlbumRepository extends JpaRepository<Album, String> {
+    List<Album> findByArtistId(String artistId);
+
     @Modifying
     @Query("UPDATE Album a SET a.favorites = a.favorites + 1 WHERE a.id = :albumId")
     void incrementFavorites(@Param("albumId") String albumId);

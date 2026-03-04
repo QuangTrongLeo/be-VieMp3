@@ -78,6 +78,12 @@ public class ArtistService {
         artistRepository.delete(artist);
     }
 
+    // ===== GET BY ID =====
+    public ArtistResponse getArtistById(String artistId) {
+        Artist artist = entityQueryService.findArtistById(artistId);
+        return ArtistMapper.toResponse(artist);
+    }
+
     // ===== GET BY NAME =====
     public ArtistResponse getArtistByName(String artistName) {
         Artist artist = entityQueryService.findArtistByName(artistName);
