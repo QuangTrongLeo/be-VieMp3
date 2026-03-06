@@ -9,6 +9,7 @@ import be_viemp3.viemp3.entity.User;
 import be_viemp3.viemp3.mapper.music.FavoriteSongMapper;
 import be_viemp3.viemp3.repository.music.FavoriteSongRepository;
 import be_viemp3.viemp3.repository.music.SongRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class FavoriteSongService {
     private final SecurityUtils securityUtils;
 
     // ===== ADD SONG TO FAVORITE =====
+    @Transactional
     public void addSongToFavorite(String songId) {
         User currentUser = securityUtils.getCurrentUser();
         Song song = entityQueryService.findSongById(songId);
@@ -38,6 +40,7 @@ public class FavoriteSongService {
     }
 
     // ===== REMOVE SONG FROM FAVORITE =====
+    @Transactional
     public void removeSongFromFavorite(String songId) {
         User currentUser = securityUtils.getCurrentUser();
         FavoriteSong favoriteSong = entityQueryService.findFavoriteSong(currentUser.getId(), songId);
