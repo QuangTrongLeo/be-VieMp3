@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(baseUrl + "/favorite-artists/**").permitAll()
                         .requestMatchers(baseUrl + "/favorite-albums/**").permitAll()
                         .requestMatchers(baseUrl + "/genres/**").permitAll()
+                        .requestMatchers(baseUrl + "/playlists/**").permitAll()
                         .requestMatchers(baseUrl + "/songs/**").permitAll()
                         .requestMatchers(baseUrl + "/users/**").permitAll()
                         .anyRequest().authenticated()

@@ -87,6 +87,7 @@ public class PlaylistController {
     }
 
     // ===== GET BY ID =====
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{playlistId}")
     public ResponseEntity<ApiResponse<PlaylistResponse>> getPlaylistById(@PathVariable String playlistId) {
         PlaylistResponse response = playlistService.getPlaylistById(playlistId);

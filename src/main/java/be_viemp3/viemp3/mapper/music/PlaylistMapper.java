@@ -12,6 +12,7 @@ public class PlaylistMapper {
         response.setId(playlist.getId());
         response.setName(playlist.getName());
         response.setCover(playlist.getCover());
+        response.setCreatedAt(playlist.getCreatedAt());
         if (playlist.getUser() != null) {
             response.setUserId(playlist.getUser().getId());
         }

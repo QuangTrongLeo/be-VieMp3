@@ -43,7 +43,7 @@ public class PlaylistService {
         playlist.setCover(coverUrl);
         playlist.setUser(user);
         playlist.setSongs(new ArrayList<>());
-        playlistRepository.save(playlist);
+        playlist = playlistRepository.save(playlist);
         return PlaylistMapper.toResponse(playlist);
     }
 
