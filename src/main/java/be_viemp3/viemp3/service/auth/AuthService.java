@@ -1,5 +1,6 @@
 package be_viemp3.viemp3.service.auth;
 
+import be_viemp3.viemp3.common.service.EntityQueryService;
 import be_viemp3.viemp3.dto.request.auth.LoginRequest;
 import be_viemp3.viemp3.dto.request.auth.RegisterRequest;
 import be_viemp3.viemp3.dto.request.auth.VerifyOtpRequest;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+    private final EntityQueryService entityQueryService;
     private final OtpService otpService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -45,6 +47,24 @@ public class AuthService {
         String refreshToken = jwtService.generateRefreshToken(user);
 
         return new TokenResponse(accessToken, refreshToken);
+    }
+
+    public TokenResponse refreshToken(String refreshToken) {
+        // lấy email từ token
+        String email = jwtService.extractEmail(refreshToken);
+        User user = entityQueryService.findUserByEmail(email);
+        // kiểm tra token hết hạn
+        if (jwtService.isTokenExpired(refreshToken)) {
+            throw new RuntimeException("Refresh token đã hết hạn");
+        }
+
+        // tạo access token mới
+        String newAccessToken = jwtService.generateAccessToken(user);
+
+        return TokenResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }
 

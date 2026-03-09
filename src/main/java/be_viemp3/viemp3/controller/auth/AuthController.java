@@ -2,6 +2,7 @@ package be_viemp3.viemp3.controller.auth;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
 import be_viemp3.viemp3.dto.request.auth.LoginRequest;
+import be_viemp3.viemp3.dto.request.auth.RefreshTokenRequest;
 import be_viemp3.viemp3.dto.request.auth.RegisterRequest;
 import be_viemp3.viemp3.dto.request.auth.VerifyOtpRequest;
 import be_viemp3.viemp3.dto.response.auth.TokenResponse;
@@ -48,6 +49,18 @@ public class AuthController {
                 ApiResponse.<TokenResponse>builder()
                         .success(true)
                         .message("Đăng nhập thành công")
+                        .data(tokenResponse)
+                        .build()
+        );
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<TokenResponse>> refresh(@RequestBody RefreshTokenRequest request) {
+        TokenResponse tokenResponse = authService.refreshToken(request.getRefreshToken());
+        return ResponseEntity.ok(
+                ApiResponse.<TokenResponse>builder()
+                        .success(true)
+                        .message("Refresh token thành công")
                         .data(tokenResponse)
                         .build()
         );
