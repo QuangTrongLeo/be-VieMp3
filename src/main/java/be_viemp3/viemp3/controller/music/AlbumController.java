@@ -63,7 +63,7 @@ public class AlbumController {
 
     // ===== ADD SONG TO ALBUM =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @PutMapping("/add-song")
+    @PostMapping("/add-song")
     public ResponseEntity<ApiResponse<Void>> addSongToAlbum(@RequestBody AddSongToAlbumRequest request) {
         albumService.addSongToAlbum(request);
         return ResponseEntity.ok(

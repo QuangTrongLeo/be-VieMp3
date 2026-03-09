@@ -11,6 +11,7 @@ import be_viemp3.viemp3.entity.Song;
 import be_viemp3.viemp3.mapper.music.AlbumMapper;
 import be_viemp3.viemp3.repository.music.AlbumRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -69,6 +70,7 @@ public class AlbumService {
     }
 
     // ===== ADD SONG TO ALBUM =====
+    @Transactional
     public void addSongToAlbum(AddSongToAlbumRequest request) {
         Song song = entityQueryService.findSongById(request.getSongId());
         Album album = entityQueryService.findAlbumById(request.getAlbumId());
@@ -80,6 +82,7 @@ public class AlbumService {
     }
 
     // ===== REMOVE SONG FROM ALBUM =====
+    @Transactional
     public void removeSongFromAlbum(String songId) {
         Song song = entityQueryService.findSongById(songId);
         if (song.getAlbum() == null) {
