@@ -61,7 +61,7 @@ public class SongController {
     }
 
     // ===== GET BY ID =====
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasAnyRole('USER')")
     @GetMapping("/{songId}")
     public ResponseEntity<ApiResponse<SongResponse>> getSongById(@PathVariable String songId) {
         SongResponse response = songService.getSongById(songId);

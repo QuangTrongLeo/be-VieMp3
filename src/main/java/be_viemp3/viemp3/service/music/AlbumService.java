@@ -11,6 +11,7 @@ import be_viemp3.viemp3.entity.Song;
 import be_viemp3.viemp3.mapper.music.AlbumMapper;
 import be_viemp3.viemp3.repository.music.AlbumRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
+import be_viemp3.viemp3.service.subscription.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AlbumService {
     private final AlbumRepository albumRepository;
+    private final NotificationService notificationService;
     private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;
 
@@ -32,6 +34,7 @@ public class AlbumService {
         album.setCover(coverUrl);
         album.setArtist(artist);
         albumRepository.save(album);
+        notificationService.notifyNewAlbum(artist, album);
         return AlbumMapper.toResponse(album);
     }
 

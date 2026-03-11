@@ -39,9 +39,11 @@ public class SecurityConfig {
                         .requestMatchers(baseUrl + "/favorite-artists/**").permitAll()
                         .requestMatchers(baseUrl + "/favorite-albums/**").permitAll()
                         .requestMatchers(baseUrl + "/genres/**").permitAll()
+                        .requestMatchers(baseUrl + "/listen-histories/**").permitAll()
                         .requestMatchers(baseUrl + "/playlists/**").permitAll()
                         .requestMatchers(baseUrl + "/songs/**").permitAll()
                         .requestMatchers(baseUrl + "/users/**").permitAll()
+                        .requestMatchers(baseUrl + "/notifications/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter,

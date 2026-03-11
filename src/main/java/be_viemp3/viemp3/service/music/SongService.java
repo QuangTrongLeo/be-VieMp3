@@ -8,6 +8,7 @@ import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.mapper.music.SongMapper;
 import be_viemp3.viemp3.repository.music.SongRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
+import be_viemp3.viemp3.service.subscription.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SongService {
     private final SongRepository songRepository;
+    private final NotificationService notificationService;
+    private final ListenHistoryService listenHistoryService;
     private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;
 
@@ -37,6 +40,8 @@ public class SongService {
         song.setGenre(genre);
         song.setAlbum(null);
         songRepository.save(song);
+
+        notificationService.notifyNewSong(artist, song);
 
         return SongMapper.toResponse(song);
     }
@@ -111,7 +116,9 @@ public class SongService {
 
     // ===== GET BY ID =====
     public SongResponse getSongById(String songId) {
-        return SongMapper.toResponse(entityQueryService.findSongById(songId));
+        Song song = entityQueryService.findSongById(songId);
+        listenHistoryService.saveListenHistory(songId);
+        return SongMapper.toResponse(song);
     }
 
     // ===== GET ALL =====

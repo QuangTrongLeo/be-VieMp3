@@ -11,23 +11,26 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "listen_history")
-public class ListenHistory {
+@Table(name = "notifications")
+public class Notification {
 
     @Id
     @GeneratedValue
     @UuidGenerator
+    @Column(nullable = false, updatable = false)
     private String id;
+
+    private String title;
+
+    private String cover;
+
+    private boolean isRead = false;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private OffsetDateTime listenedAt;
+    private OffsetDateTime notificationAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "song_id")
-    private Song song;
 }

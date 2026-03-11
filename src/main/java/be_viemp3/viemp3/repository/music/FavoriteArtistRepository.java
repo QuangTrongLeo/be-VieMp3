@@ -12,4 +12,5 @@ public interface FavoriteArtistRepository extends JpaRepository<FavoriteArtist, 
     boolean existsByUserIdAndArtistId(String userId, String artistId);
     Optional<FavoriteArtist> findByUserIdAndArtistId(String userId, String artistId);
     List<FavoriteArtist> findByUserId(String userId);
+    List<FavoriteArtist> findByArtistId(String artistId);
 }
