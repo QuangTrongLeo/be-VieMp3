@@ -25,9 +25,10 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // --- Khởi tạo genres ---
         for (GenreEnum genreEnum : GenreEnum.values()) {
-            if (!genreRepository.existsByName(genreEnum)) {
+            String name = genreEnum.name();
+            if (!genreRepository.existsByNameIgnoreCase(name)) {
                 Genre genre = new Genre();
-                genre.setName(genreEnum);
+                genre.setName(name);
                 genreRepository.save(genre);
             }
         }

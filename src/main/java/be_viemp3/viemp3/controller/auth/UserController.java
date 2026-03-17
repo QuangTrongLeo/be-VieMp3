@@ -47,8 +47,8 @@ public class UserController {
     }
 
     // ===== GET ALL USERS =====
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @PreAuthorize("hasRole('MOD')")
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         List<UserResponse> responses = userService.getAllUsers();
         return ResponseEntity.ok(

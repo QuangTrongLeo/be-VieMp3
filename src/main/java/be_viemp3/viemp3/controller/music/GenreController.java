@@ -20,7 +20,7 @@ public class GenreController {
 
     // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @PostMapping("/all")
+    @PostMapping()
     public ResponseEntity<ApiResponse<GenreResponse>> createGenre(@RequestBody @Valid CreateGenreRequest request) {
         GenreResponse response = genreService.createGenre(request);
         return ResponseEntity.ok(
@@ -75,10 +75,10 @@ public class GenreController {
     }
 
     // ===== DELETE =====
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteGenre(@PathVariable String id) {
-        genreService.deleteGenre(id);
+    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @DeleteMapping("/{genreId}")
+    public ResponseEntity<ApiResponse<Void>> deleteGenre(@PathVariable String genreId) {
+        genreService.deleteGenre(genreId);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
                         .success(true)

@@ -9,5 +9,5 @@ public class UpdateGenreRequest {
     @NotNull(message = "GenreId không được để trống")
     private String genreId;
     @NotNull(message = "Tên genre không được để trống")
-    private GenreEnum name;
+    private String name;
 }

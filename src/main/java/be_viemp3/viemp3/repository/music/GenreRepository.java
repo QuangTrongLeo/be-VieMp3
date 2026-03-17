@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GenreRepository extends JpaRepository<Genre, String> {
-    boolean existsByName(GenreEnum genre);
+    boolean existsByNameIgnoreCase(String name);
 }

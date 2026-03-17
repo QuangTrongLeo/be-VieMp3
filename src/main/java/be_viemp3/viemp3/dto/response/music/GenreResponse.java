@@ -6,5 +6,4 @@ import lombok.Data;
 public class GenreResponse {
     private String id;
     private String name;
-    private String description;
 }

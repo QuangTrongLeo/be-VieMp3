@@ -7,8 +7,7 @@ public class GenreMapper {
     public static GenreResponse toResponse(Genre genre) {
         GenreResponse response = new GenreResponse();
         response.setId(genre.getId());
-        response.setName(genre.getName().name());             // Enum code
-        response.setDescription(genre.getName().getDescription()); // Enum description
+        response.setName(genre.getName());
         return response;
     }
 }

@@ -21,9 +21,8 @@ public class Genre {
     @Column(nullable = false, updatable = false)
     private String id;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, unique = true)
-    private GenreEnum name;
+    private String name;
 
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Song> songs;

@@ -1,10 +1,12 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
+import be_viemp3.viemp3.common.util.SecurityUtils;
 import be_viemp3.viemp3.dto.request.music.genre.CreateGenreRequest;
 import be_viemp3.viemp3.dto.request.music.genre.UpdateGenreRequest;
 import be_viemp3.viemp3.dto.response.music.GenreResponse;
 import be_viemp3.viemp3.entity.Genre;
+import be_viemp3.viemp3.entity.User;
 import be_viemp3.viemp3.enums.GenreEnum;
 import be_viemp3.viemp3.mapper.music.GenreMapper;
 import be_viemp3.viemp3.repository.music.GenreRepository;
@@ -21,12 +23,12 @@ public class GenreService {
 
     // CREATE GENRE
     public GenreResponse createGenre(CreateGenreRequest request) {
-        GenreEnum genreEnum = request.getName();
-        if (genreRepository.existsByName(genreEnum)) {
-            throw new IllegalArgumentException("Genre đã tồn tại: " + genreEnum);
+        String name = request.getName().trim().toUpperCase();
+        if (genreRepository.existsByNameIgnoreCase(name)) {
+            throw new IllegalArgumentException("Genre đã tồn tại: " + name);
         }
         Genre genre = new Genre();
-        genre.setName(genreEnum);
+        genre.setName(name);
         genreRepository.save(genre);
         return GenreMapper.toResponse(genre);
     }
@@ -47,11 +49,12 @@ public class GenreService {
     // UPDATE GENRE
     public GenreResponse updateGenre(UpdateGenreRequest request) {
         Genre genre = entityQueryService.findGenreById(request.getGenreId());
-        GenreEnum newGenre = request.getName();
-        if (!genre.getName().equals(newGenre) && genreRepository.existsByName(newGenre)) {
-            throw new IllegalArgumentException("Genre đã tồn tại: " + newGenre);
+        String newName = request.getName().trim().toUpperCase();
+        if (!genre.getName().equalsIgnoreCase(newName)
+                && genreRepository.existsByNameIgnoreCase(newName)) {
+            throw new IllegalArgumentException("Genre đã tồn tại: " + newName);
         }
-        genre.setName(newGenre);
+        genre.setName(newName);
         genreRepository.save(genre);
         return GenreMapper.toResponse(genre);
     }
