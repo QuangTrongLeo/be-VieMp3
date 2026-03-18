@@ -14,11 +14,13 @@ import be_viemp3.viemp3.mapper.auth.UserMapper;
 import be_viemp3.viemp3.repository.auth.RoleRepository;
 import be_viemp3.viemp3.repository.auth.UserRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -92,10 +94,62 @@ public class UserService {
     }
 
     // ===== UPDATE ROLE FOR USER =====
+    @Transactional
     public void updateUserRoles(UpdateUserRoleRequest request) {
         User user = entityQueryService.findUserById(request.getUserId());
-        Set<RoleEnum> normalizedRoles = roleService.normalizeRoles(request.getRoles());
-        Set<Role> roles = roleService.getRolesFromEnums(normalizedRoles);
+
+        // Role hiện tại của user
+        Set<RoleEnum> currentRoles = user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+
+        // Lấy role được chọn (ưu tiên theo cấp)
+        Set<RoleEnum> requestRoles = request.getRoles();
+
+        RoleEnum selectedRole;
+        if (requestRoles.contains(RoleEnum.ADMIN)) {
+            selectedRole = RoleEnum.ADMIN;
+        } else if (requestRoles.contains(RoleEnum.PREMIUM)) {
+            selectedRole = RoleEnum.PREMIUM;
+        } else if (requestRoles.contains(RoleEnum.MOD)) {
+            selectedRole = RoleEnum.MOD;
+        } else {
+            selectedRole = RoleEnum.USER;
+        }
+
+        // Build role mới
+        Set<RoleEnum> newRoles = new HashSet<>();
+
+        switch (selectedRole) {
+            case USER:
+                newRoles.add(RoleEnum.USER);
+                break;
+
+            case MOD:
+                newRoles.add(RoleEnum.USER);
+                newRoles.add(RoleEnum.MOD);
+                break;
+
+            case PREMIUM:
+                newRoles.add(RoleEnum.USER);
+
+                // CHỈ giữ MOD nếu user đã có từ trước
+                if (currentRoles.contains(RoleEnum.MOD)) {
+                    newRoles.add(RoleEnum.MOD);
+                }
+
+                newRoles.add(RoleEnum.PREMIUM);
+                break;
+
+            case ADMIN:
+                newRoles.add(RoleEnum.ADMIN);
+                break;
+        }
+
+        // Convert sang entity Role
+        Set<Role> roles = roleService.getRolesFromEnums(newRoles);
+
         user.setRoles(roles);
         userRepository.save(user);
     }
