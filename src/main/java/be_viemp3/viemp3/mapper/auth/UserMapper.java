@@ -1,5 +1,6 @@
 package be_viemp3.viemp3.mapper.auth;
 
+import be_viemp3.viemp3.dto.response.auth.RoleResponse;
 import be_viemp3.viemp3.dto.response.auth.UserResponse;
 import be_viemp3.viemp3.entity.User;
 
@@ -15,6 +16,12 @@ public class UserMapper {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .avatar(user.getAvatar())
+                .roles(user.getRoles().stream()
+                        .map(role -> RoleResponse.builder()
+                                .id(role.getId())
+                                .name(role.getName().name())
+                                .build())
+                        .toList())
                 .build();
     }
 

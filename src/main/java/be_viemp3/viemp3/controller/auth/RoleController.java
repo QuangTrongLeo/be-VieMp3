@@ -1,8 +1,11 @@
 package be_viemp3.viemp3.controller.auth;
 
+import be_viemp3.viemp3.common.response.ApiResponse;
 import be_viemp3.viemp3.dto.response.auth.RoleResponse;
+import be_viemp3.viemp3.dto.response.auth.UserResponse;
 import be_viemp3.viemp3.service.auth.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +20,14 @@ public class RoleController {
     private final RoleService roleService;
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
-    public List<RoleResponse> getAllRoles() {
-        return roleService.getAllRoles();
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<RoleResponse>>> getAllRoles() {
+        List<RoleResponse> roles = roleService.getAllRoles();
+        ApiResponse<List<RoleResponse>> response = ApiResponse.<List<RoleResponse>>builder()
+                .success(true)
+                .message("Lấy danh sách role thành công")
+                .data(roles)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }
