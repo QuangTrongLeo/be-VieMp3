@@ -28,6 +28,8 @@ public class Song {
     private String description;
     @Column(nullable = false)
     private int favorites = 0;
+    @Column(nullable = false)
+    private long listenCount = 0;
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;

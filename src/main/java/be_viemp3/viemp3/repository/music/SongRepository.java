@@ -1,6 +1,7 @@
 package be_viemp3.viemp3.repository.music;
 
 import be_viemp3.viemp3.entity.Song;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,10 +17,12 @@ public interface SongRepository extends JpaRepository<Song, String> {
     List<Song> findByAlbumId(String albumId);
     List<Song> findByGenreId(String genreId);
     @Modifying
+    @Transactional
     @Query("UPDATE Song s SET s.favorites = s.favorites + 1 WHERE s.id = :songId")
     void incrementFavorites(@Param("songId") String songId);
 
     @Modifying
+    @Transactional
     @Query("""
         UPDATE Song s
         SET s.favorites =
@@ -27,4 +30,9 @@ public interface SongRepository extends JpaRepository<Song, String> {
         WHERE s.id = :songId
     """)
     void decrementFavorites(@Param("songId") String songId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Song s SET s.listenCount = s.listenCount + 1 WHERE s.id = :songId")
+    void incrementListenCount(@Param("songId") String songId);
 }

@@ -11,7 +11,10 @@ import java.time.OffsetDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "listen_history")
+@Table(
+        name = "listen_history",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "song_id"})
+)
 public class ListenHistory {
 
     @Id
