@@ -17,5 +17,6 @@ public class SongResponse {
     private String albumId;
     private String genreId;
     private int favorites;
+    private long listenCount;
     private OffsetDateTime createdAt;
 }

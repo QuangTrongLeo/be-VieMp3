@@ -23,6 +23,7 @@ public class SongMapper {
                 .albumId(song.getAlbum() != null ? song.getAlbum().getId() : null)
                 .genreId(song.getGenre() != null ? song.getGenre().getId() : null)
                 .favorites(song.getFavorites())
+                .listenCount(song.getListenCount())
                 .createdAt(song.getCreatedAt())
                 .build();
     }
