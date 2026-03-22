@@ -1,4 +1,4 @@
-package be_viemp3.viemp3.service.recomment;
+package be_viemp3.viemp3.service.recommend;
 
 import be_viemp3.viemp3.entity.ListenHistory;
 import be_viemp3.viemp3.entity.Song;
@@ -21,127 +21,137 @@ public class RecommendationService {
     private final ListenHistoryRepository listenHistoryRepository;
     private final SongRepository songRepository;
 
-    // ===== MAIN FUNCTION =====
+    // ===== CONSTANTS =====
+    private static final double GENRE_WEIGHT = 0.5;
+    private static final double ARTIST_WEIGHT = 0.3;
+    private static final double ALBUM_WEIGHT = 0.2;
+
+    private static final double RECENT_WEIGHT_DECAY = 7.0;
+    private static final double LISTENED_PENALTY = 0.7;
+
+    // ===== MAIN =====
     public List<Song> recommend(String userId) {
         List<ListenHistory> histories = listenHistoryRepository.findByUserId(userId);
         List<Song> allSongs = songRepository.findAll();
 
-        if (histories.isEmpty()) {
-            return allSongs.stream().limit(10).toList();
-        }
+        if (allSongs.isEmpty()) return List.of();
 
-        // ===== songs đã nghe =====
-        Set<String> listenedIds = histories.stream()
-                .map(h -> h.getSong().getId())
-                .collect(Collectors.toSet());
-
-        // ===== build index =====
+        // ===== index =====
         Map<String, Integer> genreIndex = buildGenreIndex(allSongs);
         Map<String, Integer> artistIndex = buildArtistIndex(allSongs);
         Map<String, Integer> albumIndex = buildAlbumIndex(allSongs);
 
-        // ===== build user vector =====
+        // ===== user vector =====
         double[] userVector = buildUserVector(histories, genreIndex, artistIndex, albumIndex);
+        Map<String, double[]> songVectorMap = allSongs.stream()
+                .collect(Collectors.toMap(
+                        Song::getId,
+                        song -> buildSongVector(song, genreIndex, artistIndex, albumIndex)
+                ));
 
-        // ===== scoring =====
+        Set<String> listenedIds = histories.stream()
+                .map(h -> h.getSong().getId())
+                .collect(Collectors.toSet());
+
         return allSongs.stream()
-                .filter(song -> !listenedIds.contains(song.getId()))
                 .sorted((a, b) -> Double.compare(
-                        scoreSong(b, userVector, genreIndex, artistIndex, albumIndex),
-                        scoreSong(a, userVector, genreIndex, artistIndex, albumIndex)
+                        score(b, userVector, songVectorMap.get(b.getId()), listenedIds),
+                        score(a, userVector, songVectorMap.get(a.getId()), listenedIds)
                 ))
                 .limit(10)
                 .toList();
     }
 
-    // ===== BUILD USER VECTOR =====
+    // ===== SCORE =====
+    private double score(
+            Song song,
+            double[] userVector,
+            double[] songVector,
+            Set<String> listenedIds
+    ) {
+        double similarity = cosineSimilarity(userVector, songVector);
+        if (listenedIds.contains(song.getId())) {
+            similarity *= LISTENED_PENALTY;
+        }
+        return similarity;
+    }
+
+    // ===== USER VECTOR =====
     private double[] buildUserVector(
             List<ListenHistory> histories,
             Map<String, Integer> genreIndex,
             Map<String, Integer> artistIndex,
             Map<String, Integer> albumIndex
     ) {
-        int size = genreIndex.size() + artistIndex.size() + albumIndex.size();
+        int size = genreIndex.size() + artistIndex.size() + albumIndex.size() + 2;
         double[] userVector = new double[size];
 
         OffsetDateTime now = OffsetDateTime.now();
 
         for (ListenHistory lh : histories) {
-            double[] songVector = vectorizeSong(lh.getSong(), genreIndex, artistIndex, albumIndex);
+            double[] songVector = buildSongVector(lh.getSong(), genreIndex, artistIndex, albumIndex);
 
-            // ===== TIME DECAY =====
             long days = ChronoUnit.DAYS.between(lh.getListenedAt(), now);
-            double weight = Math.exp(-days / 7.0);
+            double weight = Math.exp(-days / RECENT_WEIGHT_DECAY);
 
             for (int i = 0; i < size; i++) {
                 userVector[i] += songVector[i] * weight;
             }
         }
 
-        return normalize(userVector);
+        return normalizeVector(userVector);
     }
 
-    // ===== SCORE SONG =====
-    private double scoreSong(
+    // ===== SONG VECTOR =====
+    private double[] buildSongVector(
             Song song,
-            double[] userVector,
             Map<String, Integer> genreIndex,
             Map<String, Integer> artistIndex,
             Map<String, Integer> albumIndex
     ) {
-        double[] songVector = vectorizeSong(song, genreIndex, artistIndex, albumIndex);
-        return cosineSimilarity(userVector, songVector);
+        int baseSize = genreIndex.size() + artistIndex.size() + albumIndex.size();
+        int size = baseSize + 2;
+
+        double[] vector = new double[size];
+
+        // ===== categorical =====
+        if (song.getGenre() != null) {
+            vector[genreIndex.get(song.getGenre().getId())] = GENRE_WEIGHT;
+        }
+
+        if (song.getArtist() != null) {
+            vector[artistIndex.get(song.getArtist().getId()) + genreIndex.size()] = ARTIST_WEIGHT;
+        }
+
+        if (song.getAlbum() != null) {
+            vector[albumIndex.get(song.getAlbum().getId())
+                    + genreIndex.size()
+                    + artistIndex.size()] = ALBUM_WEIGHT;
+        }
+
+        // ===== numeric =====
+        vector[baseSize] = normalizeValue(song.getFavorites());
+        vector[baseSize + 1] = normalizeValue(song.getListenCount());
+
+        return vector;
     }
 
-    // ===== COSINE USING LIBRARY =====
+    // ===== COSINE =====
     private double cosineSimilarity(double[] a, double[] b) {
         RealVector v1 = new ArrayRealVector(a);
         RealVector v2 = new ArrayRealVector(b);
 
-        double dotProduct = v1.dotProduct(v2);
+        double dot = v1.dotProduct(v2);
         double normA = v1.getNorm();
         double normB = v2.getNorm();
 
         if (normA == 0 || normB == 0) return 0;
 
-        return dotProduct / (normA * normB);
+        return dot / (normA * normB);
     }
 
-    // ===== VECTORIZE SONG =====
-    private double[] vectorizeSong(
-            Song song,
-            Map<String, Integer> genreIndex,
-            Map<String, Integer> artistIndex,
-            Map<String, Integer> albumIndex
-    ) {
-        int size = genreIndex.size() + artistIndex.size() + albumIndex.size();
-        double[] vector = new double[size];
-
-        // Genre weight = 0.5
-        if (song.getGenre() != null) {
-            int pos = genreIndex.get(song.getGenre().getId());
-            vector[pos] = 0.5;
-        }
-
-        // Artist weight = 0.3
-        if (song.getArtist() != null) {
-            int pos = artistIndex.get(song.getArtist().getId()) + genreIndex.size();
-            vector[pos] = 0.3;
-        }
-
-        // Album weight = 0.2
-        if (song.getAlbum() != null) {
-            int pos = albumIndex.get(song.getAlbum().getId())
-                    + genreIndex.size()
-                    + artistIndex.size();
-            vector[pos] = 0.2;
-        }
-
-        return vector;
-    }
-
-    // ===== NORMALIZE =====
-    private double[] normalize(double[] vector) {
+    // ===== NORMALIZE VECTOR =====
+    private double[] normalizeVector(double[] vector) {
         double sum = 0;
         for (double v : vector) sum += v * v;
 
@@ -155,38 +165,42 @@ public class RecommendationService {
         return vector;
     }
 
-    // ===== BUILD INDEX =====
-    private Map<String, Integer> buildGenreIndex(List<Song> songs) {
-        Map<String, Integer> map = new HashMap<>();
-        int index = 0;
+    // ===== NORMALIZE VALUE =====
+    private double normalizeValue(long value) {
+        return Math.log(1 + value);
+    }
 
-        for (Song s : songs) {
-            if (s.getGenre() != null && !map.containsKey(s.getGenre().getId())) {
-                map.put(s.getGenre().getId(), index++);
-            }
-        }
-        return map;
+    // ===== INDEX =====
+    private Map<String, Integer> buildGenreIndex(List<Song> songs) {
+        return buildIndex(songs.stream()
+                .map(Song::getGenre)
+                .filter(Objects::nonNull)
+                .map(g -> g.getId())
+                .toList());
     }
 
     private Map<String, Integer> buildArtistIndex(List<Song> songs) {
-        Map<String, Integer> map = new HashMap<>();
-        int index = 0;
-
-        for (Song s : songs) {
-            if (s.getArtist() != null && !map.containsKey(s.getArtist().getId())) {
-                map.put(s.getArtist().getId(), index++);
-            }
-        }
-        return map;
+        return buildIndex(songs.stream()
+                .map(Song::getArtist)
+                .filter(Objects::nonNull)
+                .map(a -> a.getId())
+                .toList());
     }
 
     private Map<String, Integer> buildAlbumIndex(List<Song> songs) {
-        Map<String, Integer> map = new HashMap<>();
-        int index = 0;
+        return buildIndex(songs.stream()
+                .map(Song::getAlbum)
+                .filter(Objects::nonNull)
+                .map(a -> a.getId())
+                .toList());
+    }
 
-        for (Song s : songs) {
-            if (s.getAlbum() != null && !map.containsKey(s.getAlbum().getId())) {
-                map.put(s.getAlbum().getId(), index++);
+    private Map<String, Integer> buildIndex(List<String> ids) {
+        Map<String, Integer> map = new HashMap<>();
+        int i = 0;
+        for (String id : ids) {
+            if (!map.containsKey(id)) {
+                map.put(id, i++);
             }
         }
         return map;

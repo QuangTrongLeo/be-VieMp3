@@ -1,6 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
+import be_viemp3.viemp3.common.util.SecurityUtils;
 import be_viemp3.viemp3.dto.request.music.song.CreateSongRequest;
 import be_viemp3.viemp3.dto.request.music.song.UpdateSongRequest;
 import be_viemp3.viemp3.dto.response.music.SongResponse;
@@ -8,6 +9,7 @@ import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.mapper.music.SongMapper;
 import be_viemp3.viemp3.repository.music.SongRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
+import be_viemp3.viemp3.service.recommend.RecommendationService;
 import be_viemp3.viemp3.service.subscription.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class SongService {
     private final ListenHistoryService listenHistoryService;
     private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;
+    private final RecommendationService recommendationService;
+    private final SecurityUtils securityUtils;
 
     // ===== CREATE =====
     public SongResponse createSong(CreateSongRequest request) {
@@ -151,6 +155,13 @@ public class SongService {
     public List<SongResponse> getSongsByPlaylist(String playlistId) {
         Playlist playlist = entityQueryService.findPlaylistById(playlistId);
         List<Song> songs = playlist.getSongs();
+        return SongMapper.toResponseList(songs);
+    }
+
+    // ===== GET SONGS RECOMMEND =====
+    public List<SongResponse> recommendSongs() {
+        User user = securityUtils.getCurrentUser();
+        List<Song> songs = recommendationService.recommend(user.getId());
         return SongMapper.toResponseList(songs);
     }
 }
