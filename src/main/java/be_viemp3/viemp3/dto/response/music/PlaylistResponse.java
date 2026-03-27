@@ -12,5 +12,5 @@ public class PlaylistResponse {
     private String cover;
     private OffsetDateTime createdAt;
     private String userId;
-    private List<String> songIds;
+    private List<SongResponse> songs;
 }

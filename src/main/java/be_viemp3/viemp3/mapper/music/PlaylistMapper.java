@@ -17,10 +17,10 @@ public class PlaylistMapper {
             response.setUserId(playlist.getUser().getId());
         }
         if (playlist.getSongs() != null) {
-            response.setSongIds(
+            response.setSongs(
                     playlist.getSongs()
                             .stream()
-                            .map(song -> song.getId())
+                            .map(SongMapper::toResponse)
                             .collect(Collectors.toList())
             );
         }

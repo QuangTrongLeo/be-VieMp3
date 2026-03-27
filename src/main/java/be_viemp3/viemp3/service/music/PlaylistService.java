@@ -13,6 +13,7 @@ import be_viemp3.viemp3.entity.User;
 import be_viemp3.viemp3.mapper.music.PlaylistMapper;
 import be_viemp3.viemp3.repository.music.PlaylistRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -91,6 +92,7 @@ public class PlaylistService {
     }
 
     // ===== ADD SONG TO PLAYLIST =====
+    @Transactional
     public void addSongToPlaylist(AddSongToPlaylistRequest request) {
         Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
         User currentUser = securityUtils.getCurrentUser();
@@ -105,6 +107,7 @@ public class PlaylistService {
     }
 
     // ===== REMOVE SONG FROM PLAYLIST =====
+    @Transactional
     public void removeSongFromPlaylist(RemoveSongToPlaylistRequest request) {
         Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
         User currentUser = securityUtils.getCurrentUser();
