@@ -5,6 +5,7 @@ import be_viemp3.viemp3.dto.request.ai.ChatRequest;
 import be_viemp3.viemp3.service.ai.ChatAIService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AIController {
     private final ChatAIService chatService;
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/chat")
     public ResponseEntity<ApiResponse<String>> chatAI(@RequestBody ChatRequest request) {
         String response = chatService.chatAI(request);

@@ -1,15 +1,12 @@
 package be_viemp3.viemp3.service.ai;
 
+import be_viemp3.viemp3.common.util.SecurityUtils;
 import be_viemp3.viemp3.dto.request.ai.ChatRequest;
+import be_viemp3.viemp3.entity.User;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
-import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.SimpleVectorStore;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +17,15 @@ import java.util.Map;
 public class ChatAIService {
     private final ChatClient chatClient;
     private final JdbcTemplate jdbcTemplate;
+    private final SecurityUtils securityUtils;
 
-    public ChatAIService(ChatClient.Builder builder, JdbcTemplate jdbcTemplate) {
+    public ChatAIService(ChatClient.Builder builder, JdbcTemplate jdbcTemplate, SecurityUtils securityUtils) {
         this.jdbcTemplate = jdbcTemplate;
+        this.securityUtils = securityUtils;
 
         // 1. Khởi tạo bộ nhớ hội thoại
         ChatMemory chatMemory = MessageWindowChatMemory.builder()
-                .maxMessages(30)
+                .maxMessages(50)
                 .build();
 
         // 2. Build ChatClient với đầy đủ Advisors mặc định
@@ -36,10 +35,13 @@ public class ChatAIService {
     }
 
     public String chatAI(ChatRequest request) {
+        User user = securityUtils.getCurrentUser();
         String question = request.getMessage();
 
+        String conversationId = user.getId();
+
         // 1. Generate SQL
-        String sql = generateSql(question);
+        String sql = generateSql(question, conversationId);
 
         // 2. Nếu không phải SQL → trả luôn
         if (!AISqlUtils.isSafeSelect(sql)) {
@@ -51,25 +53,27 @@ public class ChatAIService {
             List<Map<String, Object>> data = jdbcTemplate.queryForList(sql);
 
             // 4. Format answer
-            return formatAnswer(question, data);
+            return formatAnswer(question, data, conversationId);
 
         } catch (Exception e) {
             return "Không thể truy vấn dữ liệu: " + e.getMessage();
         }
     }
 
-    private String generateSql(String question) {
+    private String generateSql(String question, String conversationId) {
         return chatClient.prompt()
                 .system(AIConstant.DB_SCHEMA)
                 .user(question)
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .call()
                 .content();
     }
 
-    private String formatAnswer(String question, List<Map<String, Object>> data) {
+    private String formatAnswer(String question, List<Map<String, Object>> data, String conversationId) {
         return chatClient.prompt()
                 .system("Dựa trên dữ liệu sau, hãy trả lời người dùng: " + data)
                 .user(question)
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .call()
                 .content();
     }
