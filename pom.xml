@@ -116,6 +116,12 @@
             <version>3.6.1</version>
         </dependency>
 
+        <!-- Google -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
         <!-- Spring AI -->
         <dependency>
             <groupId>org.springframework.ai</groupId>

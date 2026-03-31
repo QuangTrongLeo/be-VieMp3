@@ -19,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Value("${api.vie-mp3-url}")
     private String baseUrl;
@@ -33,6 +34,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login/**", "/oauth2/**").permitAll()
                         .requestMatchers(baseUrl + "/ai/**").permitAll()
                         .requestMatchers(baseUrl + "/auth/**").permitAll()
                         .requestMatchers(baseUrl + "/artists/**").permitAll()
@@ -47,15 +49,11 @@ public class SecurityConfig {
                         .requestMatchers(baseUrl + "/notifications/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth -> oauth
+                        .successHandler(oAuth2SuccessHandler)
+                )
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-    }
-
-    // ===== PASSWORD ENCODER =====
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     // ===== AUTHENTICATION MANAGER =====

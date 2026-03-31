@@ -1,10 +1,7 @@
 package be_viemp3.viemp3.controller.auth;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.auth.LoginRequest;
-import be_viemp3.viemp3.dto.request.auth.RefreshTokenRequest;
-import be_viemp3.viemp3.dto.request.auth.RegisterRequest;
-import be_viemp3.viemp3.dto.request.auth.VerifyOtpRequest;
+import be_viemp3.viemp3.dto.request.auth.*;
 import be_viemp3.viemp3.dto.response.auth.TokenResponse;
 import be_viemp3.viemp3.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;

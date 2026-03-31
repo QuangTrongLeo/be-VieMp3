@@ -7,6 +7,7 @@ import be_viemp3.viemp3.dto.request.auth.VerifyOtpRequest;
 import be_viemp3.viemp3.dto.response.auth.TokenResponse;
 import be_viemp3.viemp3.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

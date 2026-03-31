@@ -166,7 +166,7 @@ public class UserService {
     }
 
     // Tạo user
-    private User buildUser(String username, String email, String password){
+    public User buildUser(String username, String email, String password){
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
@@ -175,6 +175,25 @@ public class UserService {
         Role roleUser = entityQueryService.findRoleByName(RoleEnum.USER);
         user.getRoles().add(roleUser);
         return user;
+    }
+
+    @Transactional
+    public User processOAuthPostLogin(String username, String email, String avatar) {
+        return userRepository.findByEmail(email).orElseGet(() -> {
+            // Chỉ chạy đoạn này nếu không tìm thấy email trong DB
+            User newUser = new User();
+            newUser.setEmail(email);
+            newUser.setUsername(username);
+            newUser.setAvatar(avatar);
+            newUser.setPassword(""); // OAuth2 không cần password
+            newUser.setEnabled(true); // Tin tưởng xác thực từ Google
+
+            // Gán Role mặc định
+            Role roleUser = entityQueryService.findRoleByName(RoleEnum.USER);
+            newUser.getRoles().add(roleUser);
+
+            return userRepository.save(newUser);
+        });
     }
 }
 
