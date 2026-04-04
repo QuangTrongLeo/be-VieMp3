@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/login/**", "/oauth2/**").permitAll()
                         .requestMatchers(baseUrl + "/ai/**").permitAll()
                         .requestMatchers(baseUrl + "/auth/**").permitAll()
+                        .requestMatchers(baseUrl + "/analytics/**").permitAll()
                         .requestMatchers(baseUrl + "/artists/**").permitAll()
                         .requestMatchers(baseUrl + "/albums/**").permitAll()
                         .requestMatchers(baseUrl + "/favorite-artists/**").permitAll()
