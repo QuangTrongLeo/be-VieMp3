@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.common.util.SecurityUtils;
+import be_viemp3.viemp3.service.auth.SecurityService;
 import be_viemp3.viemp3.dto.response.music.FavoriteArtistResponse;
 import be_viemp3.viemp3.entity.Artist;
 import be_viemp3.viemp3.entity.FavoriteArtist;
@@ -21,12 +21,12 @@ public class FavoriteArtistService {
     private final ArtistRepository artistRepository;
     private final FavoriteArtistRepository favoriteArtistRepository;
     private final EntityQueryService entityQueryService;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityService;
 
     // ===== ADD ARTIST TO FAVORITE =====
     @Transactional
     public void addArtistToFavorite(String artistId) {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         Artist artist = entityQueryService.findArtistById(artistId);
         boolean exists = favoriteArtistRepository.existsByUserIdAndArtistId(currentUser.getId(), artistId);
         if (exists) return;
@@ -40,7 +40,7 @@ public class FavoriteArtistService {
     // ===== REMOVE ARTIST FROM FAVORITE =====
     @Transactional
     public void removeArtistFromFavorite(String artistId) {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         FavoriteArtist favoriteArtist = entityQueryService.findFavoriteArtist(currentUser.getId(), artistId);
         favoriteArtistRepository.delete(favoriteArtist);
         artistRepository.decrementFavorites(artistId);
@@ -48,7 +48,7 @@ public class FavoriteArtistService {
 
     // ===== GET MY FAVORITE ARTISTS =====
     public List<FavoriteArtistResponse> getMyFavoriteArtists() {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         List<FavoriteArtist> favoriteArtists = favoriteArtistRepository.findByUserId(currentUser.getId());
         return FavoriteArtistMapper.toResponseList(favoriteArtists);
     }

@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.common.util.SecurityUtils;
+import be_viemp3.viemp3.service.auth.SecurityService;
 import be_viemp3.viemp3.dto.response.music.FavoriteAlbumResponse;
 import be_viemp3.viemp3.entity.Album;
 import be_viemp3.viemp3.entity.FavoriteAlbum;
@@ -21,12 +21,12 @@ public class FavoriteAlbumService {
     private final AlbumRepository albumRepository;
     private final FavoriteAlbumRepository favoriteAlbumRepository;
     private final EntityQueryService entityQueryService;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityService;
 
     // ===== ADD ALBUM TO FAVORITE =====
     @Transactional
     public void addAlbumToFavorite(String albumId) {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         Album album = entityQueryService.findAlbumById(albumId);
         boolean exists = favoriteAlbumRepository.existsByUserIdAndAlbumId(currentUser.getId(), albumId);
         if (exists) return;
@@ -40,7 +40,7 @@ public class FavoriteAlbumService {
     // ===== REMOVE ALBUM FROM FAVORITE =====
     @Transactional
     public void removeAlbumFromFavorite(String albumId) {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         FavoriteAlbum favoriteAlbum = entityQueryService.findFavoriteAlbum(currentUser.getId(), albumId);
         favoriteAlbumRepository.delete(favoriteAlbum);
         albumRepository.decrementFavorites(albumId);
@@ -48,7 +48,7 @@ public class FavoriteAlbumService {
 
     // ===== GET MY FAVORITE ALBUMS =====
     public List<FavoriteAlbumResponse> getMyFavoriteAlbums() {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         List<FavoriteAlbum> favoriteAlbums = favoriteAlbumRepository.findByUserId(currentUser.getId());
         return FavoriteAlbumMapper.toResponseList(favoriteAlbums);
     }

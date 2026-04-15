@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.common.util.SecurityUtils;
+import be_viemp3.viemp3.service.auth.SecurityService;
 import be_viemp3.viemp3.dto.response.music.FavoriteSongResponse;
 import be_viemp3.viemp3.entity.FavoriteSong;
 import be_viemp3.viemp3.entity.Song;
@@ -21,12 +21,12 @@ public class FavoriteSongService {
     private final SongRepository songRepository;
     private final FavoriteSongRepository favoriteSongRepository;
     private final EntityQueryService entityQueryService;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityService;
 
     // ===== ADD SONG TO FAVORITE =====
     @Transactional
     public void addSongToFavorite(String songId) {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         Song song = entityQueryService.findSongById(songId);
         boolean exists = favoriteSongRepository.existsByUserIdAndSongId(currentUser.getId(), songId);
         if (exists) {
@@ -42,7 +42,7 @@ public class FavoriteSongService {
     // ===== REMOVE SONG FROM FAVORITE =====
     @Transactional
     public void removeSongFromFavorite(String songId) {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         FavoriteSong favoriteSong = entityQueryService.findFavoriteSong(currentUser.getId(), songId);
         favoriteSongRepository.delete(favoriteSong);
         songRepository.decrementFavorites(songId);
@@ -50,7 +50,7 @@ public class FavoriteSongService {
 
     // ===== GET MY FAVORITE SONGS =====
     public List<FavoriteSongResponse> getMyFavoriteSongs() {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         List<FavoriteSong> favoriteSongs = favoriteSongRepository.findByUserId(currentUser.getId());
         return FavoriteSongMapper.toResponseList(favoriteSongs);
     }

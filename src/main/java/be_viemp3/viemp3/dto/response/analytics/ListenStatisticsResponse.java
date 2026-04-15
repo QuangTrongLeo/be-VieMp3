@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListenStatsResponse {
+public class ListenStatisticsResponse {
     private String period;
     private Long totalListen;
 }

@@ -1,13 +1,10 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.common.util.SecurityUtils;
 import be_viemp3.viemp3.dto.request.music.genre.CreateGenreRequest;
 import be_viemp3.viemp3.dto.request.music.genre.UpdateGenreRequest;
 import be_viemp3.viemp3.dto.response.music.GenreResponse;
 import be_viemp3.viemp3.entity.Genre;
-import be_viemp3.viemp3.entity.User;
-import be_viemp3.viemp3.enums.GenreEnum;
 import be_viemp3.viemp3.mapper.music.GenreMapper;
 import be_viemp3.viemp3.repository.music.GenreRepository;
 import lombok.RequiredArgsConstructor;

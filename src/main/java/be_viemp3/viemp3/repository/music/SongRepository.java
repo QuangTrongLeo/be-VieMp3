@@ -16,6 +16,10 @@ public interface SongRepository extends JpaRepository<Song, String> {
     List<Song> findByArtistId(String artistId);
     List<Song> findByAlbumId(String albumId);
     List<Song> findByGenreId(String genreId);
+
+    @Query("SELECT s.genre.name, COUNT(s) FROM Song s GROUP BY s.genre.name")
+    List<Object[]> countSongsByGenre();
+
     @Modifying
     @Transactional
     @Query("UPDATE Song s SET s.favorites = s.favorites + 1 WHERE s.id = :songId")

@@ -1,6 +1,6 @@
 package be_viemp3.viemp3.service.subscription;
 
-import be_viemp3.viemp3.common.util.SecurityUtils;
+import be_viemp3.viemp3.service.auth.SecurityService;
 import be_viemp3.viemp3.dto.response.subscription.NotificationResponse;
 import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.mapper.subscription.NotificationMapper;
@@ -17,10 +17,10 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final FavoriteArtistRepository favoriteArtistRepository;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityService;
 
     public List<NotificationResponse> getMyNotifications() {
-        User user = securityUtils.getCurrentUser();
+        User user = securityService.getCurrentUser();
         List<Notification> notifications = notificationRepository.findByUserIdOrderByNotificationAtDesc(user.getId());
         return NotificationMapper.toResponseList(notifications);
     }

@@ -1,6 +1,5 @@
 package be_viemp3.viemp3.repository.music;
 
-import be_viemp3.viemp3.dto.response.analytics.ListenStatsResponse;
 import be_viemp3.viemp3.entity.ListenHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.common.util.SecurityUtils;
+import be_viemp3.viemp3.service.auth.SecurityService;
 import be_viemp3.viemp3.dto.request.music.playlist.AddSongToPlaylistRequest;
 import be_viemp3.viemp3.dto.request.music.playlist.CreatePlaylistRequest;
 import be_viemp3.viemp3.dto.request.music.playlist.RemoveSongToPlaylistRequest;
@@ -27,14 +27,14 @@ public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityService;
 
     // ===== CREATE =====
     public PlaylistResponse createPlaylist(CreatePlaylistRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
             throw new IllegalArgumentException("Tên playlist là bắt buộc");
         }
-        User user = securityUtils.getCurrentUser();
+        User user = securityService.getCurrentUser();
         String coverUrl = null;
         if (request.getCover() != null && !request.getCover().isEmpty()) {
             coverUrl = fileStorageService.upload(request.getCover(), "playlists");
@@ -51,7 +51,7 @@ public class PlaylistService {
     // ===== UPDATE =====
     public PlaylistResponse updatePlaylist(UpdatePlaylistRequest request) {
         Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
-        User user = securityUtils.getCurrentUser();
+        User user = securityService.getCurrentUser();
         // check owner
         if (!playlist.getUser().getEmail().equals(user.getEmail())) {
             throw new IllegalArgumentException("Bạn không có quyền chỉnh sửa playlist này");
@@ -81,7 +81,7 @@ public class PlaylistService {
     // ===== DELETE =====
     public void deletePlaylist(String playlistId) {
         Playlist playlist = entityQueryService.findPlaylistById(playlistId);
-        User user = securityUtils.getCurrentUser();
+        User user = securityService.getCurrentUser();
         if (!playlist.getUser().getEmail().equals(user.getEmail())) {
             throw new IllegalArgumentException("Bạn không có quyền xoá playlist này");
         }
@@ -95,7 +95,7 @@ public class PlaylistService {
     @Transactional
     public void addSongToPlaylist(AddSongToPlaylistRequest request) {
         Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         if (!playlist.getUser().getId().equals(currentUser.getId())) {
             throw new AccessDeniedException("Bạn không có quyền chỉnh sửa playlist này");
         }
@@ -110,7 +110,7 @@ public class PlaylistService {
     @Transactional
     public void removeSongFromPlaylist(RemoveSongToPlaylistRequest request) {
         Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         if (!playlist.getUser().getId().equals(currentUser.getId())) {
             throw new AccessDeniedException("Bạn không có quyền chỉnh sửa playlist này");
         }
@@ -128,9 +128,7 @@ public class PlaylistService {
 
     // ===== GET ALL BY USER =====
     public List<PlaylistResponse> getPlaylistsByUser() {
-        User user = securityUtils.getCurrentUser();
-        return PlaylistMapper.toResponseList(
-                playlistRepository.findByUser(user)
-        );
+        User user = securityService.getCurrentUser();
+        return PlaylistMapper.toResponseList(playlistRepository.findByUser(user));
     }
 }

@@ -1,6 +1,6 @@
 package be_viemp3.viemp3.service.ai;
 
-import be_viemp3.viemp3.common.util.SecurityUtils;
+import be_viemp3.viemp3.service.auth.SecurityService;
 import be_viemp3.viemp3.dto.request.ai.ChatRequest;
 import be_viemp3.viemp3.entity.User;
 import org.springframework.ai.chat.client.ChatClient;
@@ -17,9 +17,9 @@ import java.util.Map;
 public class ChatAIService {
     private final ChatClient chatClient;
     private final JdbcTemplate jdbcTemplate;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityUtils;
 
-    public ChatAIService(ChatClient.Builder builder, JdbcTemplate jdbcTemplate, SecurityUtils securityUtils) {
+    public ChatAIService(ChatClient.Builder builder, JdbcTemplate jdbcTemplate, SecurityService securityUtils) {
         this.jdbcTemplate = jdbcTemplate;
         this.securityUtils = securityUtils;
 

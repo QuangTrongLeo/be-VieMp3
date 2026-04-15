@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.common.util.SecurityUtils;
+import be_viemp3.viemp3.service.auth.SecurityService;
 import be_viemp3.viemp3.dto.request.music.song.CreateSongRequest;
 import be_viemp3.viemp3.dto.request.music.song.UpdateSongRequest;
 import be_viemp3.viemp3.dto.response.music.SongResponse;
@@ -25,7 +25,7 @@ public class SongService {
     private final EntityQueryService entityQueryService;
     private final FileStorageService fileStorageService;
     private final RecommendationService recommendationService;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityService;
 
     // ===== CREATE =====
     public SongResponse createSong(CreateSongRequest request) {
@@ -160,7 +160,7 @@ public class SongService {
 
     // ===== GET SONGS RECOMMEND =====
     public List<SongResponse> recommendSongs() {
-        User user = securityUtils.getCurrentUser();
+        User user = securityService.getCurrentUser();
         List<Song> songs = recommendationService.recommend(user.getId());
         return SongMapper.toResponseList(songs);
     }

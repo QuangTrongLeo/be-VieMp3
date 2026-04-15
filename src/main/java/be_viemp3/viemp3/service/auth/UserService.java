@@ -1,7 +1,6 @@
 package be_viemp3.viemp3.service.auth;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.common.util.SecurityUtils;
 import be_viemp3.viemp3.dto.request.auth.RegisterRequest;
 import be_viemp3.viemp3.dto.request.auth.UpdateProfileRequest;
 import be_viemp3.viemp3.dto.request.auth.UpdateUserRoleRequest;
@@ -11,12 +10,10 @@ import be_viemp3.viemp3.entity.User;
 import be_viemp3.viemp3.enums.RoleEnum;
 import be_viemp3.viemp3.common.exception.EmailAlreadyExistsException;
 import be_viemp3.viemp3.mapper.auth.UserMapper;
-import be_viemp3.viemp3.repository.auth.RoleRepository;
 import be_viemp3.viemp3.repository.auth.UserRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +30,7 @@ public class UserService {
     private final FileStorageService fileStorageService;
     private final EntityQueryService entityQueryService;
     private final PasswordEncoder passwordEncoder;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityUtils;
 
     // Tạo user chưa kích hoạt
     public void createUser(RegisterRequest request) {

@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.common.util.SecurityUtils;
+import be_viemp3.viemp3.service.auth.SecurityService;
 import be_viemp3.viemp3.dto.response.music.ListenHistoryResponse;
 import be_viemp3.viemp3.entity.ListenHistory;
 import be_viemp3.viemp3.entity.Song;
@@ -23,19 +23,19 @@ public class ListenHistoryService {
 
     private final ListenHistoryRepository listenHistoryRepository;
     private final EntityQueryService entityQueryService;
-    private final SecurityUtils securityUtils;
+    private final SecurityService securityService;
     private final SongRepository songRepository;
     private static final int MAX_HISTORY = 30;
 
     public List<ListenHistoryResponse> getMyListenHistory() {
-        User user = securityUtils.getCurrentUser();
+        User user = securityService.getCurrentUser();
         List<ListenHistory> histories = listenHistoryRepository.findByUserIdOrderByListenedAtDesc(user.getId());
         return ListenHistoryMapper.toResponseList(histories);
     }
 
     @Transactional
     public void saveListenHistory(String songId) {
-        User user = securityUtils.getCurrentUser();
+        User user = securityService.getCurrentUser();
         Song song = entityQueryService.findSongById(songId);
         Optional<ListenHistory> optional = listenHistoryRepository.findByUserIdAndSongId(user.getId(), songId);
         if (optional.isPresent()) {
