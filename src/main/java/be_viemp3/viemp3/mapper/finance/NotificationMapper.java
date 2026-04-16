@@ -1,6 +1,6 @@
-package be_viemp3.viemp3.mapper.subscription;
+package be_viemp3.viemp3.mapper.finance;
 
-import be_viemp3.viemp3.dto.response.subscription.NotificationResponse;
+import be_viemp3.viemp3.dto.response.finance.NotificationResponse;
 import be_viemp3.viemp3.entity.Notification;
 
 import java.util.List;

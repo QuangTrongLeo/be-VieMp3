@@ -10,7 +10,7 @@ import be_viemp3.viemp3.mapper.music.SongMapper;
 import be_viemp3.viemp3.repository.music.SongRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
 import be_viemp3.viemp3.service.recommend.RecommendationService;
-import be_viemp3.viemp3.service.subscription.NotificationService;
+import be_viemp3.viemp3.service.finance.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

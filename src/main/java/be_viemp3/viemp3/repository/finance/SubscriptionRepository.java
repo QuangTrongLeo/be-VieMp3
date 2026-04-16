@@ -1,4 +1,4 @@
-package be_viemp3.viemp3.repository.subscription;
+package be_viemp3.viemp3.repository.finance;
 
 import be_viemp3.viemp3.entity.Subscription;
 import be_viemp3.viemp3.enums.SubscriptionEnum;

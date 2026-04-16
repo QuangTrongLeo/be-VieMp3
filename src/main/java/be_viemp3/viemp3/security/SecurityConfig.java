@@ -9,10 +9,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 @Configuration
 @EnableMethodSecurity
@@ -27,6 +28,34 @@ public class SecurityConfig {
     // ===== SECURITY FILTER CHAIN =====
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        // 1. Danh sách các endpoint thuần túy
+        String[] apiPaths = {
+                "/ai/**",
+                "/auth/**",
+                "/analytics/**",
+                "/artists/**",
+                "/albums/**",
+                "/favorite-artists/**",
+                "/favorite-albums/**",
+                "/genres/**",
+                "/listen-histories/**",
+                "/playlists/**",
+                "/songs/**",
+                "/users/**",
+                "/notifications/**",
+                "/vouchers/**"
+        };
+
+        // 2. Các endpoint hệ thống đặc biệt
+        String[] staticPaths = {"/login/**", "/oauth2/**"};
+
+        // 3. Hợp nhất và nối chuỗi baseUrl tự động
+        String[] publicEndpoints = Stream.concat(
+                Arrays.stream(staticPaths),
+                Arrays.stream(apiPaths).map(path -> baseUrl + path)
+        ).toArray(String[]::new);
+
         return http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> {})
@@ -34,20 +63,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login/**", "/oauth2/**").permitAll()
-                        .requestMatchers(baseUrl + "/ai/**").permitAll()
-                        .requestMatchers(baseUrl + "/auth/**").permitAll()
-                        .requestMatchers(baseUrl + "/analytics/**").permitAll()
-                        .requestMatchers(baseUrl + "/artists/**").permitAll()
-                        .requestMatchers(baseUrl + "/albums/**").permitAll()
-                        .requestMatchers(baseUrl + "/favorite-artists/**").permitAll()
-                        .requestMatchers(baseUrl + "/favorite-albums/**").permitAll()
-                        .requestMatchers(baseUrl + "/genres/**").permitAll()
-                        .requestMatchers(baseUrl + "/listen-histories/**").permitAll()
-                        .requestMatchers(baseUrl + "/playlists/**").permitAll()
-                        .requestMatchers(baseUrl + "/songs/**").permitAll()
-                        .requestMatchers(baseUrl + "/users/**").permitAll()
-                        .requestMatchers(baseUrl + "/notifications/**").permitAll()
+                        .requestMatchers(publicEndpoints).permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth

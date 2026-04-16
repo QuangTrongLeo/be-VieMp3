@@ -11,7 +11,7 @@ import be_viemp3.viemp3.entity.Song;
 import be_viemp3.viemp3.mapper.music.AlbumMapper;
 import be_viemp3.viemp3.repository.music.AlbumRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
-import be_viemp3.viemp3.service.subscription.NotificationService;
+import be_viemp3.viemp3.service.finance.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

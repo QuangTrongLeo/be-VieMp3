@@ -1,11 +1,11 @@
-package be_viemp3.viemp3.service.subscription;
+package be_viemp3.viemp3.service.finance;
 
 import be_viemp3.viemp3.service.auth.SecurityService;
-import be_viemp3.viemp3.dto.response.subscription.NotificationResponse;
+import be_viemp3.viemp3.dto.response.finance.NotificationResponse;
 import be_viemp3.viemp3.entity.*;
-import be_viemp3.viemp3.mapper.subscription.NotificationMapper;
+import be_viemp3.viemp3.mapper.finance.NotificationMapper;
 import be_viemp3.viemp3.repository.music.FavoriteArtistRepository;
-import be_viemp3.viemp3.repository.subscription.NotificationRepository;
+import be_viemp3.viemp3.repository.finance.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

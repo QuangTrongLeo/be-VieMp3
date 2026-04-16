@@ -1,8 +1,8 @@
-package be_viemp3.viemp3.controller.subscription;
+package be_viemp3.viemp3.controller.finance;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.response.subscription.NotificationResponse;
-import be_viemp3.viemp3.service.subscription.NotificationService;
+import be_viemp3.viemp3.dto.response.finance.NotificationResponse;
+import be_viemp3.viemp3.service.finance.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

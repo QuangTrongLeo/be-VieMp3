@@ -1,4 +1,4 @@
-package be_viemp3.viemp3.dto.response.subscription;
+package be_viemp3.viemp3.dto.response.finance;
 
 import lombok.Builder;
 import lombok.Data;
