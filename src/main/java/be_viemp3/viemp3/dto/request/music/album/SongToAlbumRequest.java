@@ -3,7 +3,7 @@ package be_viemp3.viemp3.dto.request.music.album;
 import lombok.Data;
 
 @Data
-public class AddSongToAlbumRequest {
+public class SongToAlbumRequest {
     private String albumId;
     private String songId;
 }

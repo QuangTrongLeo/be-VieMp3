@@ -2,7 +2,6 @@ package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
 import be_viemp3.viemp3.dto.request.music.genre.GenreRequest;
-import be_viemp3.viemp3.dto.request.music.genre.UpdateGenreRequest;
 import be_viemp3.viemp3.dto.response.music.GenreResponse;
 import be_viemp3.viemp3.service.music.GenreService;
 import jakarta.validation.Valid;

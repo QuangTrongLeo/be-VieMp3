@@ -1,9 +1,8 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.music.album.AddSongToAlbumRequest;
-import be_viemp3.viemp3.dto.request.music.album.CreateAlbumRequest;
-import be_viemp3.viemp3.dto.request.music.album.UpdateAlbumRequest;
+import be_viemp3.viemp3.dto.request.music.album.SongToAlbumRequest;
+import be_viemp3.viemp3.dto.request.music.album.AlbumRequest;
 import be_viemp3.viemp3.dto.response.music.AlbumResponse;
 import be_viemp3.viemp3.service.music.AlbumService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class AlbumController {
     // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<AlbumResponse>> createAlbum(@ModelAttribute CreateAlbumRequest request) {
+    public ResponseEntity<ApiResponse<AlbumResponse>> createAlbum(@ModelAttribute AlbumRequest request) {
         AlbumResponse response = albumService.createAlbum(request);
         return ResponseEntity.ok(
                 ApiResponse.<AlbumResponse>builder()
@@ -36,9 +35,12 @@ public class AlbumController {
 
     // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<AlbumResponse>> updateAlbum(@ModelAttribute UpdateAlbumRequest request) {
-        AlbumResponse response = albumService.updateAlbum(request);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<AlbumResponse>> updateAlbum(
+            @PathVariable String id,
+            @ModelAttribute AlbumRequest request) {
+
+        AlbumResponse response = albumService.updateAlbum(id, request);
         return ResponseEntity.ok(
                 ApiResponse.<AlbumResponse>builder()
                         .success(true)
@@ -64,7 +66,7 @@ public class AlbumController {
     // ===== ADD SONG TO ALBUM =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping("/add-song")
-    public ResponseEntity<ApiResponse<Void>> addSongToAlbum(@RequestBody AddSongToAlbumRequest request) {
+    public ResponseEntity<ApiResponse<Void>> addSongToAlbum(@RequestBody SongToAlbumRequest request) {
         albumService.addSongToAlbum(request);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()

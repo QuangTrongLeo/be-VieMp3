@@ -1,9 +1,8 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.dto.request.music.album.AddSongToAlbumRequest;
-import be_viemp3.viemp3.dto.request.music.album.CreateAlbumRequest;
-import be_viemp3.viemp3.dto.request.music.album.UpdateAlbumRequest;
+import be_viemp3.viemp3.dto.request.music.album.SongToAlbumRequest;
+import be_viemp3.viemp3.dto.request.music.album.AlbumRequest;
 import be_viemp3.viemp3.dto.response.music.AlbumResponse;
 import be_viemp3.viemp3.entity.Album;
 import be_viemp3.viemp3.entity.Artist;
@@ -26,7 +25,7 @@ public class AlbumService {
     private final FileStorageService fileStorageService;
 
     // ===== CREATE =====
-    public AlbumResponse createAlbum(CreateAlbumRequest request) {
+    public AlbumResponse createAlbum(AlbumRequest request) {
         Artist artist = entityQueryService.findArtistById(request.getArtistId());
         String coverUrl = fileStorageService.upload(request.getCover(), "albums");
         Album album = new Album();
@@ -39,8 +38,8 @@ public class AlbumService {
     }
 
     // ===== UPDATE =====
-    public AlbumResponse updateAlbum(UpdateAlbumRequest request) {
-        Album album = entityQueryService.findAlbumById(request.getAlbumId());
+    public AlbumResponse updateAlbum(String id, AlbumRequest request) {
+        Album album = entityQueryService.findAlbumById(id);
         boolean isUpdated = false;
         // update title
         if (request.getTitle() != null && !request.getTitle().isBlank()) {
@@ -74,7 +73,7 @@ public class AlbumService {
 
     // ===== ADD SONG TO ALBUM =====
     @Transactional
-    public void addSongToAlbum(AddSongToAlbumRequest request) {
+    public void addSongToAlbum(SongToAlbumRequest request) {
         Song song = entityQueryService.findSongById(request.getSongId());
         Album album = entityQueryService.findAlbumById(request.getAlbumId());
         validateSameArtist(song, album);
