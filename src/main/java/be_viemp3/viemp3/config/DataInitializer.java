@@ -3,7 +3,6 @@ package be_viemp3.viemp3.config;
 import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.enums.GenreEnum;
 import be_viemp3.viemp3.enums.RoleEnum;
-import be_viemp3.viemp3.enums.SubscriptionEnum;
 import be_viemp3.viemp3.repository.finance.SubscriptionRepository;
 import be_viemp3.viemp3.repository.auth.RoleRepository;
 import be_viemp3.viemp3.repository.music.GenreRepository;
@@ -39,15 +38,6 @@ public class DataInitializer implements CommandLineRunner {
                 Role role = new Role();
                 role.setName(roleEnum);
                 roleRepository.save(role);
-            }
-        }
-
-        // --- Khởi tạo subscriptions (chỉ tạo ví dụ demo) ---
-        for (SubscriptionEnum subEnum : SubscriptionEnum.values()) {
-            if (!subscriptionRepository.existsByName(subEnum)) { // kiểm tra từng loại
-                Subscription sub = new Subscription();
-                sub.setName(subEnum);
-                subscriptionRepository.save(sub);
             }
         }
     }

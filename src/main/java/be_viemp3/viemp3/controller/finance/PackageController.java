@@ -1,0 +1,119 @@
+package be_viemp3.viemp3.controller.finance;
+
+import be_viemp3.viemp3.common.response.ApiResponse;
+import be_viemp3.viemp3.dto.request.finance.packages.CreatePackageRequest;
+import be_viemp3.viemp3.dto.request.finance.packages.UpdatePackageRequest;
+import be_viemp3.viemp3.dto.response.finance.DurationTypeResponse;
+import be_viemp3.viemp3.dto.response.finance.PackageResponse;
+import be_viemp3.viemp3.dto.response.finance.PackageTypeResponse;
+import be_viemp3.viemp3.service.finance.PackageService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("${api.vie-mp3-url}/packages")
+@RequiredArgsConstructor
+public class PackageController {
+
+    private final PackageService packageService;
+
+    // ===== CREATE =====
+    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PostMapping
+    public ResponseEntity<ApiResponse<PackageResponse>> createPackage(@RequestBody CreatePackageRequest request) {
+        PackageResponse response = packageService.createPackage(request);
+        return ResponseEntity.ok(
+                ApiResponse.<PackageResponse>builder()
+                        .success(true)
+                        .message("Tạo gói cước mới thành công")
+                        .data(response)
+                        .build()
+        );
+    }
+
+    // ===== UPDATE =====
+    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PutMapping("/{packageId}")
+    public ResponseEntity<ApiResponse<PackageResponse>> updatePackage(
+            @PathVariable String packageId,
+            @RequestBody UpdatePackageRequest request) {
+        PackageResponse response = packageService.updatePackage(packageId, request);
+        return ResponseEntity.ok(
+                ApiResponse.<PackageResponse>builder()
+                        .success(true)
+                        .message("Cập nhật gói cước thành công")
+                        .data(response)
+                        .build()
+        );
+    }
+
+    // ===== DELETE =====
+    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @DeleteMapping("/{packageId}")
+    public ResponseEntity<ApiResponse<Void>> deletePackage(@PathVariable String packageId) {
+        packageService.deletePackage(packageId);
+        return ResponseEntity.ok(
+                ApiResponse.<Void>builder()
+                        .success(true)
+                        .message("Xóa gói cước thành công")
+                        .build()
+        );
+    }
+
+    // ===== GET ALL =====
+    @GetMapping()
+    public ResponseEntity<ApiResponse<List<PackageResponse>>> getAllPackages() {
+        List<PackageResponse> responses = packageService.getAllPackages();
+        return ResponseEntity.ok(
+                ApiResponse.<List<PackageResponse>>builder()
+                        .success(true)
+                        .message("Lấy danh sách gói cước thành công")
+                        .data(responses)
+                        .build()
+        );
+    }
+
+    // ===== GET BY ID =====
+    @PreAuthorize("hasAnyRole('ADMIN','MOD', 'USER')")
+    @GetMapping("/{packageId}")
+    public ResponseEntity<ApiResponse<PackageResponse>> getPackageById(@PathVariable String packageId) {
+        PackageResponse response = packageService.getPackageById(packageId);
+        return ResponseEntity.ok(
+                ApiResponse.<PackageResponse>builder()
+                        .success(true)
+                        .message("Lấy thông tin chi tiết gói cước thành công")
+                        .data(response)
+                        .build()
+        );
+    }
+
+    // ===== GET ALL PACKAGE TYPES =====
+    @GetMapping("/types")
+    public ResponseEntity<ApiResponse<List<PackageTypeResponse>>> getAllPackageTypes() {
+        List<PackageTypeResponse> responses = packageService.getAllPackageTypes();
+        return ResponseEntity.ok(
+                ApiResponse.<List<PackageTypeResponse>>builder()
+                        .success(true)
+                        .message("Lấy danh sách loại gói thành công")
+                        .data(responses)
+                        .build()
+        );
+    }
+
+    // ===== GET ALL DURATION TYPES =====
+    @GetMapping("/durations")
+    public ResponseEntity<ApiResponse<List<DurationTypeResponse>>> getAllDurationTypes() {
+        List<DurationTypeResponse> responses = packageService.getAllDurationTypes();
+        return ResponseEntity.ok(
+                ApiResponse.<List<DurationTypeResponse>>builder()
+                        .success(true)
+                        .message("Lấy danh sách thời hạn gói thành công")
+                        .data(responses)
+                        .build()
+        );
+    }
+}

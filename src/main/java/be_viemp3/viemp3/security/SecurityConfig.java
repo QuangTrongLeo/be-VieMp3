@@ -44,6 +44,7 @@ public class SecurityConfig {
                 "/songs/**",
                 "/users/**",
                 "/notifications/**",
+                "/packages/**",
                 "/vouchers/**"
         };
 
