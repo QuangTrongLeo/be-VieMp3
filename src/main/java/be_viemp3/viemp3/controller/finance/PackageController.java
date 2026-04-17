@@ -1,8 +1,7 @@
 package be_viemp3.viemp3.controller.finance;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.finance.packages.CreatePackageRequest;
-import be_viemp3.viemp3.dto.request.finance.packages.UpdatePackageRequest;
+import be_viemp3.viemp3.dto.request.finance.PackageRequest;
 import be_viemp3.viemp3.dto.response.finance.DurationTypeResponse;
 import be_viemp3.viemp3.dto.response.finance.PackageResponse;
 import be_viemp3.viemp3.dto.response.finance.PackageTypeResponse;
@@ -24,7 +23,7 @@ public class PackageController {
     // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping
-    public ResponseEntity<ApiResponse<PackageResponse>> createPackage(@RequestBody CreatePackageRequest request) {
+    public ResponseEntity<ApiResponse<PackageResponse>> createPackage(@RequestBody PackageRequest request) {
         PackageResponse response = packageService.createPackage(request);
         return ResponseEntity.ok(
                 ApiResponse.<PackageResponse>builder()
@@ -40,7 +39,7 @@ public class PackageController {
     @PutMapping("/{packageId}")
     public ResponseEntity<ApiResponse<PackageResponse>> updatePackage(
             @PathVariable String packageId,
-            @RequestBody UpdatePackageRequest request) {
+            @RequestBody PackageRequest request) {
         PackageResponse response = packageService.updatePackage(packageId, request);
         return ResponseEntity.ok(
                 ApiResponse.<PackageResponse>builder()
@@ -65,7 +64,7 @@ public class PackageController {
     }
 
     // ===== GET ALL =====
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<PackageResponse>>> getAllPackages() {
         List<PackageResponse> responses = packageService.getAllPackages();
         return ResponseEntity.ok(

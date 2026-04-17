@@ -1,8 +1,7 @@
 package be_viemp3.viemp3.service.finance;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.dto.request.finance.packages.CreatePackageRequest;
-import be_viemp3.viemp3.dto.request.finance.packages.UpdatePackageRequest;
+import be_viemp3.viemp3.dto.request.finance.PackageRequest;
 import be_viemp3.viemp3.dto.response.finance.DurationTypeResponse;
 import be_viemp3.viemp3.dto.response.finance.PackageResponse;
 import be_viemp3.viemp3.dto.response.finance.PackageTypeResponse;
@@ -29,7 +28,7 @@ public class PackageService {
     }
 
     @Transactional
-    public PackageResponse createPackage(CreatePackageRequest request) {
+    public PackageResponse createPackage(PackageRequest request) {
         Double discount = (request.getDiscountPercent() != null) ? request.getDiscountPercent() : 0.0;
 
         Packages pkg = new Packages();
@@ -47,7 +46,7 @@ public class PackageService {
     }
 
     @Transactional
-    public PackageResponse updatePackage(String id, UpdatePackageRequest request) {
+    public PackageResponse updatePackage(String id, PackageRequest request) {
         Packages pkg = entityService.findPackageById(id);
 
         if (request.getType() != null) pkg.setPkg(request.getType());

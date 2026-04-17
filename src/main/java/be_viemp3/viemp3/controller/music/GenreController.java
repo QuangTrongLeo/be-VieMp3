@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.music.genre.CreateGenreRequest;
+import be_viemp3.viemp3.dto.request.music.genre.GenreRequest;
 import be_viemp3.viemp3.dto.request.music.genre.UpdateGenreRequest;
 import be_viemp3.viemp3.dto.response.music.GenreResponse;
 import be_viemp3.viemp3.service.music.GenreService;
@@ -21,7 +21,7 @@ public class GenreController {
     // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping()
-    public ResponseEntity<ApiResponse<GenreResponse>> createGenre(@RequestBody @Valid CreateGenreRequest request) {
+    public ResponseEntity<ApiResponse<GenreResponse>> createGenre(@RequestBody @Valid GenreRequest request) {
         GenreResponse response = genreService.createGenre(request);
         return ResponseEntity.ok(
                 ApiResponse.<GenreResponse>builder()
@@ -62,14 +62,15 @@ public class GenreController {
 
     // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @PutMapping
-    public ResponseEntity<ApiResponse<GenreResponse>> updateGenre(@RequestBody @Valid UpdateGenreRequest request) {
-        GenreResponse response = genreService.updateGenre(request);
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<GenreResponse>> updateGenre(
+            @PathVariable String id,
+            @RequestBody @Valid GenreRequest request) {
         return ResponseEntity.ok(
                 ApiResponse.<GenreResponse>builder()
                         .success(true)
                         .message("Cập nhật genre thành công")
-                        .data(response)
+                        .data(genreService.updateGenre(id, request))
                         .build()
         );
     }

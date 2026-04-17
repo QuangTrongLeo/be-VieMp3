@@ -1,8 +1,7 @@
 package be_viemp3.viemp3.controller.finance;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.finance.voucher.CreateVoucherRequest;
-import be_viemp3.viemp3.dto.request.finance.voucher.UpdateVoucherRequest;
+import be_viemp3.viemp3.dto.request.finance.VoucherRequest;
 import be_viemp3.viemp3.dto.response.finance.VoucherResponse;
 import be_viemp3.viemp3.service.finance.VoucherService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ public class VoucherController {
     // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping
-    public ResponseEntity<ApiResponse<VoucherResponse>> createVoucher(@RequestBody CreateVoucherRequest request) {
+    public ResponseEntity<ApiResponse<VoucherResponse>> createVoucher(@RequestBody VoucherRequest request) {
         VoucherResponse response = voucherService.createVoucher(request);
         return ResponseEntity.ok(
                 ApiResponse.<VoucherResponse>builder()
@@ -38,7 +37,7 @@ public class VoucherController {
     @PutMapping("/{voucherId}")
     public ResponseEntity<ApiResponse<VoucherResponse>> updateVoucher(
             @PathVariable String voucherId,
-            @RequestBody UpdateVoucherRequest request) {
+            @RequestBody VoucherRequest request) {
         VoucherResponse response = voucherService.updateVoucher(voucherId, request);
         return ResponseEntity.ok(
                 ApiResponse.<VoucherResponse>builder()
@@ -78,7 +77,7 @@ public class VoucherController {
 
     // ===== GET ALL (Dành cho Admin quản lý) =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<VoucherResponse>>> getAllVouchers() {
         List<VoucherResponse> responses = voucherService.getAllVouchers();
         return ResponseEntity.ok(

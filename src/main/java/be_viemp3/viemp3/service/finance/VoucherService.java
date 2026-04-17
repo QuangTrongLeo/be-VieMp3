@@ -1,8 +1,7 @@
 package be_viemp3.viemp3.service.finance;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.dto.request.finance.voucher.CreateVoucherRequest;
-import be_viemp3.viemp3.dto.request.finance.voucher.UpdateVoucherRequest;
+import be_viemp3.viemp3.dto.request.finance.VoucherRequest;
 import be_viemp3.viemp3.dto.response.finance.VoucherResponse;
 import be_viemp3.viemp3.entity.Voucher;
 import be_viemp3.viemp3.mapper.finance.VoucherMapper;
@@ -42,7 +41,7 @@ public class VoucherService {
 
     // 4. Tạo mới Voucher
     @Transactional
-    public VoucherResponse createVoucher(CreateVoucherRequest request) {
+    public VoucherResponse createVoucher(VoucherRequest request) {
         LocalDate today = LocalDate.now();
 
         // 1. Kiểm tra ngày bắt đầu không được ở quá khứ
@@ -68,7 +67,7 @@ public class VoucherService {
 
     // 5. Cập nhật Voucher
     @Transactional
-    public VoucherResponse updateVoucher(String id, UpdateVoucherRequest request) {
+    public VoucherResponse updateVoucher(String id, VoucherRequest request) {
         Voucher voucher = entityService.finVoucherById(id);
 
         if (request.getQuantity() != null) voucher.setQuantity(request.getQuantity());

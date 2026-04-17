@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class CreateGenreRequest {
+public class GenreRequest {
     @NotNull(message = "Tên genre không được để trống")
     private String name;
 }

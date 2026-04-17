@@ -1,8 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.dto.request.music.genre.CreateGenreRequest;
-import be_viemp3.viemp3.dto.request.music.genre.UpdateGenreRequest;
+import be_viemp3.viemp3.dto.request.music.genre.GenreRequest;
 import be_viemp3.viemp3.dto.response.music.GenreResponse;
 import be_viemp3.viemp3.entity.Genre;
 import be_viemp3.viemp3.mapper.music.GenreMapper;
@@ -19,7 +18,7 @@ public class GenreService {
     private final EntityQueryService entityQueryService;
 
     // CREATE GENRE
-    public GenreResponse createGenre(CreateGenreRequest request) {
+    public GenreResponse createGenre(GenreRequest request) {
         String name = request.getName().trim().toUpperCase();
         if (genreRepository.existsByNameIgnoreCase(name)) {
             throw new IllegalArgumentException("Genre đã tồn tại: " + name);
@@ -44,8 +43,8 @@ public class GenreService {
     }
 
     // UPDATE GENRE
-    public GenreResponse updateGenre(UpdateGenreRequest request) {
-        Genre genre = entityQueryService.findGenreById(request.getGenreId());
+    public GenreResponse updateGenre(String id, GenreRequest request) {
+        Genre genre = entityQueryService.findGenreById(id);
         String newName = request.getName().trim().toUpperCase();
         if (!genre.getName().equalsIgnoreCase(newName)
                 && genreRepository.existsByNameIgnoreCase(newName)) {

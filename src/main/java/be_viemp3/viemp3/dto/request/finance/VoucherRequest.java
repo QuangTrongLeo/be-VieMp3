@@ -1,13 +1,14 @@
-package be_viemp3.viemp3.dto.request.finance.voucher;
+package be_viemp3.viemp3.dto.request.finance;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
 @Builder
-public class CreateVoucherRequest {
+public class VoucherRequest {
     private Integer quantity;
     private Double discountPercentage;
     private Double maxDiscountAmount;
@@ -15,4 +16,5 @@ public class CreateVoucherRequest {
     private LocalDate startDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate endDate;
+    private Boolean active;
 }
