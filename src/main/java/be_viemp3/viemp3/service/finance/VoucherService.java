@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,6 +43,14 @@ public class VoucherService {
     // 4. Tạo mới Voucher
     @Transactional
     public VoucherResponse createVoucher(CreateVoucherRequest request) {
+        LocalDate today = LocalDate.now();
+
+        // 1. Kiểm tra ngày bắt đầu không được ở quá khứ
+        if (request.getStartDate().isBefore(today)) {
+            throw new RuntimeException("Ngày bắt đầu không thể là ngày trong quá khứ");
+        }
+
+        // 2. Kiểm tra ngày kết thúc không được trước ngày bắt đầu
         if (request.getEndDate().isBefore(request.getStartDate())) {
             throw new RuntimeException("Ngày kết thúc không thể trước ngày bắt đầu");
         }
@@ -50,8 +59,8 @@ public class VoucherService {
         voucher.setQuantity(request.getQuantity());
         voucher.setDiscountPercentage(request.getDiscountPercentage());
         voucher.setMaxDiscountAmount(request.getMaxDiscountAmount());
-        voucher.setStartDate(request.getStartDate());
-        voucher.setEndDate(request.getEndDate());
+        voucher.setStartDate(request.getStartDate().atStartOfDay()); // 00:00:00
+        voucher.setEndDate(request.getEndDate().atTime(23, 59, 59)); // 23:59:59
         voucher.setActive(true);
 
         return VoucherMapper.toResponse(voucherRepository.save(voucher));
@@ -62,13 +71,13 @@ public class VoucherService {
     public VoucherResponse updateVoucher(String id, UpdateVoucherRequest request) {
         Voucher voucher = entityService.finVoucherById(id);
 
-        voucher.setQuantity(request.getQuantity());
-        voucher.setDiscountPercentage(request.getDiscountPercentage());
-        voucher.setMaxDiscountAmount(request.getMaxDiscountAmount());
-        voucher.setStartDate(request.getStartDate());
-        voucher.setEndDate(request.getEndDate());
-        voucher.setActive(request.isActive());
-
+        if (request.getQuantity() != null) voucher.setQuantity(request.getQuantity());
+        if (request.getDiscountPercentage() != null) voucher.setDiscountPercentage(request.getDiscountPercentage());
+        if (request.getMaxDiscountAmount() != null) voucher.setMaxDiscountAmount(request.getMaxDiscountAmount());
+        if (request.getStartDate() != null) voucher.setStartDate(request.getStartDate().atStartOfDay());
+        if (request.getEndDate() != null) voucher.setEndDate(request.getEndDate().atTime(23, 59, 59));
+        if (request.getActive() != null) voucher.setActive(request.getActive());
+        
         return VoucherMapper.toResponse(voucherRepository.save(voucher));
     }
 

@@ -78,7 +78,7 @@ public class VoucherController {
 
     // ===== GET ALL (Dành cho Admin quản lý) =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @GetMapping("/all")
+    @GetMapping()
     public ResponseEntity<ApiResponse<List<VoucherResponse>>> getAllVouchers() {
         List<VoucherResponse> responses = voucherService.getAllVouchers();
         return ResponseEntity.ok(
