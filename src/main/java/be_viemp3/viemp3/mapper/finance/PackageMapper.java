@@ -19,6 +19,7 @@ public class PackageMapper {
                 .basePrice(pkg.getBasePrice())
                 .discountPercent(pkg.getDiscountPercent())
                 .finalPrice(pkg.getFinalPrice())
+                .createdAt(pkg.getCreatedAt())
                 .build();
     }
 

@@ -5,6 +5,8 @@ import be_viemp3.viemp3.enums.PackageType;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 public class PackageResponse {
@@ -14,4 +16,5 @@ public class PackageResponse {
     private Double basePrice;
     private Double discountPercent;
     private Double finalPrice;
+    private LocalDateTime createdAt;
 }

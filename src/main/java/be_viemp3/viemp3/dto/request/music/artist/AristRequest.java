@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class CreateAristRequest {
+public class AristRequest {
     private String name;
     private MultipartFile avatar;
 }

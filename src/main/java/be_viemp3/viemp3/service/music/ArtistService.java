@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.dto.request.music.artist.CreateAristRequest;
+import be_viemp3.viemp3.dto.request.music.artist.AristRequest;
 import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistRequest;
 import be_viemp3.viemp3.dto.response.music.ArtistResponse;
 import be_viemp3.viemp3.entity.Artist;
@@ -9,11 +9,8 @@ import be_viemp3.viemp3.mapper.music.ArtistMapper;
 import be_viemp3.viemp3.repository.music.ArtistRepository;
 import be_viemp3.viemp3.service.file.FileStorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.file.*;
 import java.util.List;
 
 @Service
@@ -24,7 +21,7 @@ public class ArtistService {
     private final FileStorageService fileStorageService;
 
     // ===== CREATE =====
-    public ArtistResponse createArtist(CreateAristRequest request) {
+    public ArtistResponse createArtist(AristRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
             throw new IllegalArgumentException("Tên nghệ sĩ không được để trống");
         }
@@ -42,13 +39,13 @@ public class ArtistService {
     }
 
     // ===== UPDATE =====
-    public ArtistResponse updateArtist(UpdateArtistRequest request) {
-        Artist artist = entityQueryService.findArtistById(request.getArtistId());
+    public ArtistResponse updateArtist(String id, AristRequest request) {
+        Artist artist = entityQueryService.findArtistById(id);
         boolean isUpdated = false;
 
         // ===== UPDATE NAME =====
-        if (request.getArtistName() != null && !request.getArtistName().isBlank()) {
-            artist.setName(request.getArtistName().trim());
+        if (request.getName() != null && !request.getName().isBlank()) {
+            artist.setName(request.getName().trim());
             isUpdated = true;
         }
 

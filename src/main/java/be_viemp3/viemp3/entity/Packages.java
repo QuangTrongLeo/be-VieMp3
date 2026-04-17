@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -29,4 +32,8 @@ public class Packages {
     private Double basePrice;      // Giá gốc 1 tháng (ví dụ: 20000)
     private Double discountPercent; // % Giảm giá
     private Double finalPrice;     // Tổng số tiền người dùng phải trả
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 }

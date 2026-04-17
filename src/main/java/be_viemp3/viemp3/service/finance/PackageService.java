@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,6 +37,7 @@ public class PackageService {
         pkg.setDuration(request.getDuration());
         pkg.setBasePrice(request.getBasePrice());
         pkg.setDiscountPercent(discount);
+        pkg.setCreatedAt(LocalDateTime.now());
         pkg.setFinalPrice(calculateFinalPrice(
                 request.getBasePrice(),
                 request.getDuration().getMonths(),
@@ -69,7 +71,7 @@ public class PackageService {
     }
 
     public List<PackageResponse> getAllPackages() {
-        return PackageMapper.toResponseList(packageRepository.findAll());
+        return PackageMapper.toResponseList(packageRepository.findAllByOrderByCreatedAtAsc());
     }
 
     public PackageResponse getPackageById(String id) {
