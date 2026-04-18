@@ -4,6 +4,7 @@ import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.enums.RoleEnum;
 import be_viemp3.viemp3.repository.auth.RoleRepository;
 import be_viemp3.viemp3.repository.auth.UserRepository;
+import be_viemp3.viemp3.repository.finance.OrderRepository;
 import be_viemp3.viemp3.repository.finance.PackageRepository;
 import be_viemp3.viemp3.repository.finance.VoucherRepository;
 import be_viemp3.viemp3.repository.music.*;
@@ -23,6 +24,7 @@ public class EntityQueryService {
     private final SongRepository songRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final OrderRepository orderRepository;
     private final PackageRepository packageRepository;
     private final VoucherRepository voucherRepository;
 
@@ -108,6 +110,17 @@ public class EntityQueryService {
     public Role findRoleByName(RoleEnum role) {
         return roleRepository.findByName(role)
                 .orElseThrow(() -> new RuntimeException("Role không tồn tại!"));
+    }
+
+    // ===== ORDER =====
+    public Order findOrderById(String id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order không tồn tại"));
+    }
+
+    public Order findOrderByVnpTxnRef(String vnpTxnRef) {
+        return orderRepository.findByVnpTxnRef(vnpTxnRef)
+                .orElseThrow(() -> new RuntimeException("Order không tồn tại"));
     }
 
     // ===== PACKAGES =====

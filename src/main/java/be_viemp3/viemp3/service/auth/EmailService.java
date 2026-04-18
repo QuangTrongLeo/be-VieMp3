@@ -15,7 +15,7 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);
         message.setSubject("Xác thực tài khoản VieMp3 Music");
-        message.setText("Mã OTP của bạn là: " + otp + " (hết hạn sau 10 phút).");
+        message.setText("Mã OTP của bạn là: " + otp + " (hết hạn sau 5 phút).");
         mailSender.send(message);
     }
 }

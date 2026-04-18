@@ -56,7 +56,7 @@ public class OtpService {
         VerificationToken token = new VerificationToken();
         token.setEmail(email);
         token.setOtp(otp);
-        token.setExpiryDate(LocalDateTime.now().plusMinutes(10));
+        token.setExpiryDate(LocalDateTime.now().plusMinutes(5));
         token.setUsed(false);
         return token;
     }

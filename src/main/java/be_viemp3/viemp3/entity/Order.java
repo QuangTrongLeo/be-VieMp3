@@ -1,6 +1,6 @@
 package be_viemp3.viemp3.entity;
 
-import be_viemp3.viemp3.enums.SubscriptionStatus;
+import be_viemp3.viemp3.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,14 +8,13 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "subscriptions")
-public class Subscription {
+@Table(name = "orders")
+public class Order {
     @Id
     @GeneratedValue
     @UuidGenerator
@@ -29,13 +28,17 @@ public class Subscription {
     @JoinColumn(name = "package_id", nullable = false)
     private Packages aPackage;
 
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
+    @ManyToOne
+    @JoinColumn(name = "voucher_id") // Thêm voucher nếu có dùng
+    private Voucher voucher;
+
+    private Double totalPrice; // Số tiền cuối cùng sau khi giảm giá
+    private LocalDateTime orderDate;
+    private LocalDateTime expiryDate; // Ngày hết hạn Premium dự kiến
 
     @Enumerated(EnumType.STRING)
-    private SubscriptionStatus status; // ACTIVE, EXPIRED
+    private OrderStatus status; // PENDING, COMPLETED, FAILED
 
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL)
-    private List<Revenue> revenues;
+    private String vnpTxnRef;
 }
 

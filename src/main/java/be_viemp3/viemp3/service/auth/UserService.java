@@ -48,7 +48,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // xóa user chưa kích hoạt (dọn dẹp sau 10 phút)
+    // xóa user chưa kích hoạt (dọn dẹp sau 5 phút)
     public void deleteUserIfNotEnabled(String email) {
         userRepository.findByEmail(email).ifPresent(user -> {
             if (!user.isEnabled()) {

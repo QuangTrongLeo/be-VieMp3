@@ -53,7 +53,7 @@ public class User {
     private List<FavoriteArtist> favoriteArtists;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Subscription> subscriptions;
+    private List<Order> subscriptions;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ListenHistory> listenHistories;

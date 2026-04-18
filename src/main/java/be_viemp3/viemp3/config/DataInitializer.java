@@ -3,7 +3,6 @@ package be_viemp3.viemp3.config;
 import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.enums.GenreEnum;
 import be_viemp3.viemp3.enums.RoleEnum;
-import be_viemp3.viemp3.repository.finance.SubscriptionRepository;
 import be_viemp3.viemp3.repository.auth.RoleRepository;
 import be_viemp3.viemp3.repository.music.GenreRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ public class DataInitializer implements CommandLineRunner {
 
     private final GenreRepository genreRepository;
     private final RoleRepository roleRepository;
-    private final SubscriptionRepository subscriptionRepository;
 
     @Override
     public void run(String... args) throws Exception {
