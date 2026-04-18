@@ -2,8 +2,7 @@ package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
 import be_viemp3.viemp3.service.auth.SecurityService;
-import be_viemp3.viemp3.dto.request.music.song.CreateSongRequest;
-import be_viemp3.viemp3.dto.request.music.song.UpdateSongRequest;
+import be_viemp3.viemp3.dto.request.music.song.SongRequest;
 import be_viemp3.viemp3.dto.response.music.SongResponse;
 import be_viemp3.viemp3.entity.*;
 import be_viemp3.viemp3.mapper.music.SongMapper;
@@ -28,7 +27,7 @@ public class SongService {
     private final SecurityService securityService;
 
     // ===== CREATE =====
-    public SongResponse createSong(CreateSongRequest request) {
+    public SongResponse createSong(SongRequest request) {
         Artist artist = entityQueryService.findArtistById(request.getArtistId());
         Genre genre = entityQueryService.findGenreById(request.getGenreId());
 
@@ -51,8 +50,8 @@ public class SongService {
     }
 
     // ===== UPDATE =====
-    public SongResponse updateSong(UpdateSongRequest request) {
-        Song song = entityQueryService.findSongById(request.getSongId());
+    public SongResponse updateSong(String id, SongRequest request) {
+        Song song = entityQueryService.findSongById(id);
         boolean isUpdated = false;
 
         // ===== Title =====

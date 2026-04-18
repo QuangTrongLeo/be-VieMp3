@@ -1,8 +1,7 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.music.song.CreateSongRequest;
-import be_viemp3.viemp3.dto.request.music.song.UpdateSongRequest;
+import be_viemp3.viemp3.dto.request.music.song.SongRequest;
 import be_viemp3.viemp3.dto.response.music.SongResponse;
 import be_viemp3.viemp3.service.music.SongService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ public class SongController {
     // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<SongResponse>> createSong(@ModelAttribute CreateSongRequest request) {
+    public ResponseEntity<ApiResponse<SongResponse>> createSong(@ModelAttribute SongRequest request) {
         SongResponse response = songService.createSong(request);
         return ResponseEntity.ok(
                 ApiResponse.<SongResponse>builder()
@@ -35,14 +34,15 @@ public class SongController {
 
     // ===== UPDATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<SongResponse>> updateSong(@ModelAttribute UpdateSongRequest request) {
-        SongResponse response = songService.updateSong(request);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<SongResponse>> updateSong(
+            @PathVariable String id,
+            @ModelAttribute SongRequest request) {
         return ResponseEntity.ok(
                 ApiResponse.<SongResponse>builder()
                         .success(true)
                         .message("Cập nhật bài hát thành công")
-                        .data(response)
+                        .data(songService.updateSong(id, request))
                         .build()
         );
     }
