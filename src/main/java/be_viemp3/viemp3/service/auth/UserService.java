@@ -28,9 +28,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final FileStorageService fileStorageService;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final PasswordEncoder passwordEncoder;
-    private final SecurityService securityUtils;
+    private final SecurityService securityService;
 
     // Tạo user chưa kích hoạt
     public void createUser(RegisterRequest request) {
@@ -43,8 +43,7 @@ public class UserService {
 
     // kích hoạt user khi OTP hợp lệ
     public void enableUser(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy user với email: " + email));
+        User user = entityService.findUserByEmail(email);
         user.setEnabled(true);
         userRepository.save(user);
     }
@@ -60,13 +59,13 @@ public class UserService {
 
     // ===== GET PROFILE =====
     public UserResponse getMyProfile() {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         return UserMapper.toResponse(currentUser);
     }
 
     // ===== UPDATE PROFILE =====
     public UserResponse updateProfile(UpdateProfileRequest request) {
-        User currentUser = securityUtils.getCurrentUser();
+        User currentUser = securityService.getCurrentUser();
         boolean isUpdated = false;
         // update username
         if (request.getUsername() != null && !request.getUsername().isBlank()) {
@@ -93,7 +92,7 @@ public class UserService {
     // ===== UPDATE ROLE FOR USER =====
     @Transactional
     public void updateUserRoles(UpdateUserRoleRequest request) {
-        User user = entityQueryService.findUserById(request.getUserId());
+        User user = entityService.findUserById(request.getUserId());
 
         // Role hiện tại của user
         Set<RoleEnum> currentRoles = user.getRoles()
@@ -157,9 +156,12 @@ public class UserService {
         return UserMapper.toResponseList(users);
     }
 
-    public User findUserByEmail(String email){
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Email không tồn tại!"));
+    // ===== CHECK USER IS STUDENT =====
+    public boolean checkUserIsStudent() {
+        User currentUser = securityService.getCurrentUser();
+        String email = currentUser.getEmail();
+        if (email == null) return false;
+        return email.toLowerCase().endsWith(".edu.vn");
     }
 
     // Tạo user
@@ -169,7 +171,7 @@ public class UserService {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setEnabled(false);
-        Role roleUser = entityQueryService.findRoleByName(RoleEnum.USER);
+        Role roleUser = entityService.findRoleByName(RoleEnum.USER);
         user.getRoles().add(roleUser);
         return user;
     }
@@ -186,7 +188,7 @@ public class UserService {
             newUser.setEnabled(true); // Tin tưởng xác thực từ Google
 
             // Gán Role mặc định
-            Role roleUser = entityQueryService.findRoleByName(RoleEnum.USER);
+            Role roleUser = entityService.findRoleByName(RoleEnum.USER);
             newUser.getRoles().add(roleUser);
 
             return userRepository.save(newUser);

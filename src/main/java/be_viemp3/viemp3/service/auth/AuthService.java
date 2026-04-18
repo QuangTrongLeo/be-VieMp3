@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final OtpService otpService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -34,7 +34,7 @@ public class AuthService {
 
     // Đăng nhập
     public TokenResponse login(LoginRequest request) {
-        User user = userService.findUserByEmail(request.getEmail());
+        User user = entityService.findUserByEmail(request.getEmail());
 
         if (!user.isEnabled()) {
             throw new RuntimeException("Tài khoản chưa kích hoạt!");
@@ -53,7 +53,7 @@ public class AuthService {
     public TokenResponse refreshToken(String refreshToken) {
         // lấy email từ token
         String email = jwtService.extractEmail(refreshToken);
-        User user = entityQueryService.findUserByEmail(email);
+        User user = entityService.findUserByEmail(email);
         // kiểm tra token hết hạn
         if (jwtService.isTokenExpired(refreshToken)) {
             throw new RuntimeException("Refresh token đã hết hạn");
