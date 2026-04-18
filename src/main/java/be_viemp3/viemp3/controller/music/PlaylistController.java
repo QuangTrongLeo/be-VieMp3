@@ -1,10 +1,8 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.music.playlist.AddSongToPlaylistRequest;
-import be_viemp3.viemp3.dto.request.music.playlist.CreatePlaylistRequest;
-import be_viemp3.viemp3.dto.request.music.playlist.RemoveSongToPlaylistRequest;
-import be_viemp3.viemp3.dto.request.music.playlist.UpdatePlaylistRequest;
+import be_viemp3.viemp3.dto.request.music.playlist.SongToPlaylistRequest;
+import be_viemp3.viemp3.dto.request.music.playlist.PlaylistRequest;
 import be_viemp3.viemp3.dto.response.music.PlaylistResponse;
 import be_viemp3.viemp3.service.music.PlaylistService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +22,7 @@ public class PlaylistController {
     // ===== CREATE =====
     @PreAuthorize("hasRole('USER')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<PlaylistResponse>> createPlaylist(@ModelAttribute CreatePlaylistRequest request) {
+    public ResponseEntity<ApiResponse<PlaylistResponse>> createPlaylist(@ModelAttribute PlaylistRequest request) {
         PlaylistResponse response = playlistService.createPlaylist(request);
         return ResponseEntity.ok(
                 ApiResponse.<PlaylistResponse>builder()
@@ -37,14 +35,15 @@ public class PlaylistController {
 
     // ===== UPDATE =====
     @PreAuthorize("hasRole('USER')")
-    @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<PlaylistResponse>> updatePlaylist(@ModelAttribute UpdatePlaylistRequest request) {
-        PlaylistResponse response = playlistService.updatePlaylist(request);
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<PlaylistResponse>> updatePlaylist(
+            @PathVariable String id,
+            @ModelAttribute PlaylistRequest request) {
         return ResponseEntity.ok(
                 ApiResponse.<PlaylistResponse>builder()
                         .success(true)
                         .message("Cập nhật playlist thành công")
-                        .data(response)
+                        .data(playlistService.updatePlaylist(id, request))
                         .build()
         );
     }
@@ -64,7 +63,7 @@ public class PlaylistController {
 
     @PreAuthorize("hasRole('USER')")
     @PutMapping("/add-song")
-    public ResponseEntity<ApiResponse<Void>> addSongToPlaylist(@RequestBody AddSongToPlaylistRequest request) {
+    public ResponseEntity<ApiResponse<Void>> addSongToPlaylist(@RequestBody SongToPlaylistRequest request) {
         playlistService.addSongToPlaylist(request);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()
@@ -76,7 +75,7 @@ public class PlaylistController {
 
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/remove-song")
-    public ResponseEntity<ApiResponse<Void>> removeSongFromPlaylist(@RequestBody RemoveSongToPlaylistRequest request) {
+    public ResponseEntity<ApiResponse<Void>> removeSongFromPlaylist(@RequestBody SongToPlaylistRequest request) {
         playlistService.removeSongFromPlaylist(request);
         return ResponseEntity.ok(
                 ApiResponse.<Void>builder()

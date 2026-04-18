@@ -2,10 +2,8 @@ package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
 import be_viemp3.viemp3.service.auth.SecurityService;
-import be_viemp3.viemp3.dto.request.music.playlist.AddSongToPlaylistRequest;
-import be_viemp3.viemp3.dto.request.music.playlist.CreatePlaylistRequest;
-import be_viemp3.viemp3.dto.request.music.playlist.RemoveSongToPlaylistRequest;
-import be_viemp3.viemp3.dto.request.music.playlist.UpdatePlaylistRequest;
+import be_viemp3.viemp3.dto.request.music.playlist.SongToPlaylistRequest;
+import be_viemp3.viemp3.dto.request.music.playlist.PlaylistRequest;
 import be_viemp3.viemp3.dto.response.music.PlaylistResponse;
 import be_viemp3.viemp3.entity.Playlist;
 import be_viemp3.viemp3.entity.Song;
@@ -30,7 +28,7 @@ public class PlaylistService {
     private final SecurityService securityService;
 
     // ===== CREATE =====
-    public PlaylistResponse createPlaylist(CreatePlaylistRequest request) {
+    public PlaylistResponse createPlaylist(PlaylistRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
             throw new IllegalArgumentException("Tên playlist là bắt buộc");
         }
@@ -49,8 +47,8 @@ public class PlaylistService {
     }
 
     // ===== UPDATE =====
-    public PlaylistResponse updatePlaylist(UpdatePlaylistRequest request) {
-        Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
+    public PlaylistResponse updatePlaylist(String id, PlaylistRequest request) {
+        Playlist playlist = entityQueryService.findPlaylistById(id);
         User user = securityService.getCurrentUser();
         // check owner
         if (!playlist.getUser().getEmail().equals(user.getEmail())) {
@@ -93,7 +91,7 @@ public class PlaylistService {
 
     // ===== ADD SONG TO PLAYLIST =====
     @Transactional
-    public void addSongToPlaylist(AddSongToPlaylistRequest request) {
+    public void addSongToPlaylist(SongToPlaylistRequest request) {
         Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
         User currentUser = securityService.getCurrentUser();
         if (!playlist.getUser().getId().equals(currentUser.getId())) {
@@ -108,7 +106,7 @@ public class PlaylistService {
 
     // ===== REMOVE SONG FROM PLAYLIST =====
     @Transactional
-    public void removeSongFromPlaylist(RemoveSongToPlaylistRequest request) {
+    public void removeSongFromPlaylist(SongToPlaylistRequest request) {
         Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
         User currentUser = securityService.getCurrentUser();
         if (!playlist.getUser().getId().equals(currentUser.getId())) {

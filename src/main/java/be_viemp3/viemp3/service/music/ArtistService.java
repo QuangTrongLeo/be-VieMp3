@@ -1,8 +1,7 @@
 package be_viemp3.viemp3.service.music;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
-import be_viemp3.viemp3.dto.request.music.artist.AristRequest;
-import be_viemp3.viemp3.dto.request.music.artist.UpdateArtistRequest;
+import be_viemp3.viemp3.dto.request.music.artist.ArtistRequest;
 import be_viemp3.viemp3.dto.response.music.ArtistResponse;
 import be_viemp3.viemp3.entity.Artist;
 import be_viemp3.viemp3.mapper.music.ArtistMapper;
@@ -21,7 +20,7 @@ public class ArtistService {
     private final FileStorageService fileStorageService;
 
     // ===== CREATE =====
-    public ArtistResponse createArtist(AristRequest request) {
+    public ArtistResponse createArtist(ArtistRequest request) {
         if (request.getName() == null || request.getName().isBlank()) {
             throw new IllegalArgumentException("Tên nghệ sĩ không được để trống");
         }
@@ -39,7 +38,7 @@ public class ArtistService {
     }
 
     // ===== UPDATE =====
-    public ArtistResponse updateArtist(String id, AristRequest request) {
+    public ArtistResponse updateArtist(String id, ArtistRequest request) {
         Artist artist = entityQueryService.findArtistById(id);
         boolean isUpdated = false;
 

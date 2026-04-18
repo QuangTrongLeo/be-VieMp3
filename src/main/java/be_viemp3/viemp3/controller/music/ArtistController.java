@@ -1,7 +1,7 @@
 package be_viemp3.viemp3.controller.music;
 
 import be_viemp3.viemp3.common.response.ApiResponse;
-import be_viemp3.viemp3.dto.request.music.artist.AristRequest;
+import be_viemp3.viemp3.dto.request.music.artist.ArtistRequest;
 import be_viemp3.viemp3.dto.response.music.ArtistResponse;
 import be_viemp3.viemp3.service.music.ArtistService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class ArtistController {
     // ===== CREATE =====
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiResponse<ArtistResponse>> createArtist(@ModelAttribute AristRequest request) {
+    public ResponseEntity<ApiResponse<ArtistResponse>> createArtist(@ModelAttribute ArtistRequest request) {
         ArtistResponse response = artistService.createArtist(request);
         return ResponseEntity.ok(
                 ApiResponse.<ArtistResponse>builder()
@@ -36,7 +36,7 @@ public class ArtistController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ArtistResponse>> updateArtist(
             @PathVariable("id") String id,
-            @ModelAttribute AristRequest request) {
+            @ModelAttribute ArtistRequest request) {
 
         return ResponseEntity.ok(
                 ApiResponse.<ArtistResponse>builder()

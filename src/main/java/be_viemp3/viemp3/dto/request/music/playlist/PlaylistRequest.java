@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class CreatePlaylistRequest {
+public class PlaylistRequest {
     private String name;
     private MultipartFile cover;
 }
