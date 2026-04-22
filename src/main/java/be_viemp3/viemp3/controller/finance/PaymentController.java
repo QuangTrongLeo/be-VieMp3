@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("${api.vie-mp3-url}/payments")
@@ -20,43 +19,46 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PreAuthorize("hasAnyRole('ADMIN','MOD','USER')")
-    @GetMapping("/vn-pay-redirect/{txnRef}")
-    public ResponseEntity<ApiResponse<Map<String, String>>> redirectToVnPay(
-            @PathVariable String txnRef,
-            HttpServletRequest request) {
+    @PostMapping("/payment-url/{id}")
+    public ResponseEntity<ApiResponse<Map<String, String>>> createPaymentUrl(
+            @PathVariable String id,
+            HttpServletRequest httpRequest) {
 
-        // Gọi service để lấy URL đã được build hoàn chỉnh
-        String paymentUrl = paymentService.createVnPayUrl(txnRef, request);
-
-        Map<String, String> data = new HashMap<>();
-        data.put("paymentUrl", paymentUrl);
-
+        String paymentUrl = paymentService.createPaymentUrl(id, httpRequest);
+        Map<String, String> result = new HashMap<>();
+        result.put("paymentUrl", paymentUrl);
         return ResponseEntity.ok(
                 ApiResponse.<Map<String, String>>builder()
                         .success(true)
-                        .message("Yêu cầu chuyển hướng thanh toán đã được xử lý")
-                        .data(data)
+                        .message("Tạo đường dẫn thanh toán VNPay thành công")
+                        .data(result)
                         .build()
         );
     }
 
-    @GetMapping("/vn-pay-callback")
-    public ResponseEntity<ApiResponse<Map<String, String>>> vnPayCallback(HttpServletRequest request) {
-        Map<String, String> params = request.getParameterMap().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
+    @PreAuthorize("hasAnyRole('ADMIN','MOD','USER')")
+    @GetMapping("/payment-callback")
+    public ResponseEntity<ApiResponse<Boolean>> getPaymentCallback(
+            @RequestParam Map<String, String> allParams) {
 
-        boolean isSuccess = paymentService.processPaymentCallback(params);
+        boolean isSuccess = paymentService.processPaymentCallback(allParams);
 
-        Map<String, String> resultData = new HashMap<>();
-        resultData.put("txnRef", params.get("vnp_TxnRef"));
-
-        return ResponseEntity.ok(
-                ApiResponse.<Map<String, String>>builder()
-                        .success(isSuccess)
-                        .message(isSuccess ? "Thanh toán thành công. Tài khoản đã nâng cấp PREMIUM."
-                                : "Thanh toán không thành công. Mã lỗi: " + params.get("vnp_ResponseCode"))
-                        .data(resultData)
-                        .build()
-        );
+        if (isSuccess) {
+            return ResponseEntity.ok(
+                    ApiResponse.<Boolean>builder()
+                            .success(true)
+                            .message("Thanh toán và nâng cấp Premium thành công")
+                            .data(true)
+                            .build()
+            );
+        } else {
+            return ResponseEntity.ok(
+                    ApiResponse.<Boolean>builder()
+                            .success(false)
+                            .message("Thanh toán thất bại hoặc chữ ký không hợp lệ")
+                            .data(false)
+                            .build()
+            );
+        }
     }
 }

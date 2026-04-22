@@ -2,8 +2,6 @@ package be_viemp3.viemp3.dto.request.finance;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 public class OrderRequest {
     private String packageId;

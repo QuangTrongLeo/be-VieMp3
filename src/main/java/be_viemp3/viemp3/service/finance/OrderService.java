@@ -1,6 +1,7 @@
 package be_viemp3.viemp3.service.finance;
 
 import be_viemp3.viemp3.common.service.EntityQueryService;
+import be_viemp3.viemp3.config.VNPayConfig;
 import be_viemp3.viemp3.dto.request.finance.OrderRequest;
 import be_viemp3.viemp3.dto.response.finance.OrderResponse;
 import be_viemp3.viemp3.entity.Order;
@@ -10,6 +11,7 @@ import be_viemp3.viemp3.entity.Voucher;
 import be_viemp3.viemp3.enums.OrderStatus;
 import be_viemp3.viemp3.mapper.finance.OrderMapper;
 import be_viemp3.viemp3.repository.finance.OrderRepository;
+import be_viemp3.viemp3.repository.finance.VoucherRepository;
 import be_viemp3.viemp3.service.auth.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final EntityQueryService entityService;
     private final SecurityService securityService;
+    private final VNPayConfig vnPayConfig;
 
     @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest) {
@@ -33,7 +36,7 @@ public class OrderService {
                 ? entityService.finVoucherById(orderRequest.getVoucherId()) : null;
 
         Double totalPrice = orderRequest.getTotalPrice();
-        String txnRef = String.valueOf(System.currentTimeMillis());
+        String txnRef = vnPayConfig.getRandomNumber(8);
 
         Order order = new Order();
         order.setUser(user);

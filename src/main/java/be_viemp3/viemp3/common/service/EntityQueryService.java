@@ -92,7 +92,7 @@ public class EntityQueryService {
                 .orElseThrow(() ->
                         new IllegalStateException("Bài hát không tồn tại trong danh sách yêu thích")
                 );
-    }
+    }   
 
     // ===== USER =====
     public User findUserById(String id) {
