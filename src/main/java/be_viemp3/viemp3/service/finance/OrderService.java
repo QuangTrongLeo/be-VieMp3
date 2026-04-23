@@ -74,6 +74,12 @@ public class OrderService {
         return OrderMapper.toResponseList(orders);
     }
 
+    // ===== GET ORDER BY ID =====
+    public OrderResponse getOrderById(String orderId) {
+        Order order = entityService.findOrderById(orderId);
+        return OrderMapper.toResponse(order);
+    }
+
     @Transactional
     public void completeOrder(String txnRef) {
         Order order = entityService.findOrderByVnpTxnRef(txnRef);
