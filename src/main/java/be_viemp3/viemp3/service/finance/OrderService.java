@@ -27,6 +27,7 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final VoucherService voucherService;
     private final EntityQueryService entityService;
     private final SecurityService securityService;
     private final TaskScheduler taskScheduler;
@@ -97,6 +98,10 @@ public class OrderService {
         if (!user.getRoles().contains(premiumRole)) {
             user.getRoles().add(premiumRole);
             userRepository.save(user);
+        }
+
+        if (order.getVoucher() != null) {
+            voucherService.useVoucher(order.getVoucher().getId());
         }
 
         orderRepository.save(order);

@@ -41,5 +41,5 @@ public class Voucher {
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    private boolean active = true;
+    private boolean active = false;
 }

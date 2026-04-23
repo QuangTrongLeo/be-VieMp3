@@ -7,6 +7,7 @@ import be_viemp3.viemp3.entity.Voucher;
 import be_viemp3.viemp3.mapper.finance.VoucherMapper;
 import be_viemp3.viemp3.repository.finance.VoucherRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ public class VoucherService {
         return VoucherMapper.toResponseList(voucherRepository.findAll());
     }
 
-    // 2. Lấy danh sách Voucher khả dụng
+    // 2. Lấy danh sách Voucher khả dụng (Đã kích hoạt, còn số lượng và trong hạn)
     public List<VoucherResponse> getAvailableVouchers() {
         LocalDateTime now = LocalDateTime.now();
         List<Voucher> vouchers = voucherRepository.findAllByActiveTrueAndQuantityGreaterThanAndEndDateAfter(0, now);
@@ -44,12 +45,10 @@ public class VoucherService {
     public VoucherResponse createVoucher(VoucherRequest request) {
         LocalDate today = LocalDate.now();
 
-        // 1. Kiểm tra ngày bắt đầu không được ở quá khứ
         if (request.getStartDate().isBefore(today)) {
             throw new RuntimeException("Ngày bắt đầu không thể là ngày trong quá khứ");
         }
 
-        // 2. Kiểm tra ngày kết thúc không được trước ngày bắt đầu
         if (request.getEndDate().isBefore(request.getStartDate())) {
             throw new RuntimeException("Ngày kết thúc không thể trước ngày bắt đầu");
         }
@@ -58,9 +57,13 @@ public class VoucherService {
         voucher.setQuantity(request.getQuantity());
         voucher.setDiscountPercentage(request.getDiscountPercentage());
         voucher.setMaxDiscountAmount(request.getMaxDiscountAmount());
-        voucher.setStartDate(request.getStartDate().atStartOfDay()); // 00:00:00
-        voucher.setEndDate(request.getEndDate().atTime(23, 59, 59)); // 23:59:59
-        voucher.setActive(true);
+        voucher.setStartDate(request.getStartDate().atStartOfDay());
+        voucher.setEndDate(request.getEndDate().atTime(23, 59, 59));
+        if (request.getStartDate().isEqual(today)) {
+            voucher.setActive(true);
+        } else {
+            voucher.setActive(false);
+        }
 
         return VoucherMapper.toResponse(voucherRepository.save(voucher));
     }
@@ -69,34 +72,68 @@ public class VoucherService {
     @Transactional
     public VoucherResponse updateVoucher(String id, VoucherRequest request) {
         Voucher voucher = entityService.finVoucherById(id);
+        LocalDate today = LocalDate.now();
 
         if (request.getQuantity() != null) voucher.setQuantity(request.getQuantity());
         if (request.getDiscountPercentage() != null) voucher.setDiscountPercentage(request.getDiscountPercentage());
         if (request.getMaxDiscountAmount() != null) voucher.setMaxDiscountAmount(request.getMaxDiscountAmount());
-        if (request.getStartDate() != null) voucher.setStartDate(request.getStartDate().atStartOfDay());
+
+        if (request.getStartDate() != null) {
+            voucher.setStartDate(request.getStartDate().atStartOfDay());
+            voucher.setActive(request.getStartDate().isEqual(today) || request.getStartDate().isBefore(today));
+        }
+
         if (request.getEndDate() != null) voucher.setEndDate(request.getEndDate().atTime(23, 59, 59));
         if (request.getActive() != null) voucher.setActive(request.getActive());
-        
+
         return VoucherMapper.toResponse(voucherRepository.save(voucher));
     }
 
-    // 6. Xóa Voucher (Nên dùng xóa mềm bằng cách set active = false)
+    // 6. Xóa Voucher (Nên dùng xóa mềm - Soft Delete)
     @Transactional
     public void deleteVoucher(String id) {
         Voucher voucher = entityService.finVoucherById(id);
-        voucherRepository.delete(voucher);
+        voucher.setActive(false);
+        voucherRepository.save(voucher);
     }
 
-    // 7. Logic trừ số lượng Voucher khi sử dụng thanh toán
+    // 7. Logic trừ số lượng Voucher
     @Transactional
     public void useVoucher(String id) {
         Voucher voucher = entityService.finVoucherById(id);
 
+        if (!voucher.isActive()) {
+            throw new RuntimeException("Voucher hiện không hoạt động");
+        }
         if (voucher.getQuantity() <= 0) {
             throw new RuntimeException("Voucher đã hết lượt sử dụng");
         }
 
         voucher.setQuantity(voucher.getQuantity() - 1);
         voucherRepository.save(voucher);
+    }
+
+    /**
+     * 8. HỆ THỐNG TỰ ĐỘNG KÍCH HOẠT VOUCHER
+     */
+    @Scheduled(cron = "1 0 0 * * *")
+    @Transactional
+    public void autoActivateVouchers() {
+        LocalDate today = LocalDate.now();
+        List<Voucher> vouchers = voucherRepository.findAll();
+
+        for (Voucher voucher : vouchers) {
+            // Nếu ngày bắt đầu là hôm nay và chưa active thì bật lên
+            if (voucher.getStartDate().toLocalDate().isEqual(today) && !voucher.isActive()) {
+                voucher.setActive(true);
+                voucherRepository.save(voucher);
+            }
+
+            // Tự động tắt nếu đã hết hạn
+            if (voucher.getEndDate().isBefore(LocalDateTime.now()) && voucher.isActive()) {
+                voucher.setActive(false);
+                voucherRepository.save(voucher);
+            }
+        }
     }
 }

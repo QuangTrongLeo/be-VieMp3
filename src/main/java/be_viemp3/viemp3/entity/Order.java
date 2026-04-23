@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
@@ -29,7 +31,8 @@ public class Order {
     private Packages aPackage;
 
     @ManyToOne
-    @JoinColumn(name = "voucher_id") // Thêm voucher nếu có dùng
+    @JoinColumn(name = "voucher_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Voucher voucher;
 
     private Double totalPrice; // Số tiền cuối cùng sau khi giảm giá
