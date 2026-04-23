@@ -2,6 +2,7 @@ package be_viemp3.viemp3.mapper.finance;
 
 import be_viemp3.viemp3.dto.response.finance.OrderResponse;
 import be_viemp3.viemp3.entity.Order;
+import be_viemp3.viemp3.mapper.auth.UserMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,13 +16,13 @@ public class OrderMapper {
 
         return OrderResponse.builder()
                 .id(order.getId())
-                .userId(order.getUser() != null ? order.getUser().getId() : null)
                 .pkg(PackageMapper.toResponse(order.getAPackage()))
                 .totalPrice(order.getTotalPrice())
                 .orderDate(order.getOrderDate())
                 .expiryDate(order.getExpiryDate())
                 .status(order.getStatus())
                 .vnpTxnRef(order.getVnpTxnRef())
+                .user(UserMapper.toResponse(order.getUser()))
                 .build();
     }
 
