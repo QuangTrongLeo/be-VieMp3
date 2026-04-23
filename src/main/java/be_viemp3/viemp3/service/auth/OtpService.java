@@ -29,7 +29,7 @@ public class OtpService {
 
         emailService.sendOtp(email, otp);
 
-        // Lên lịch xóa user sau 10 phút nếu chưa xác thực
+        // Lên lịch xóa user sau 5 phút nếu chưa xác thựcs
         taskScheduler.schedule(
                 () -> userService.deleteUserIfNotEnabled(email),
                 token.getExpiryDate().atZone(ZoneId.systemDefault()).toInstant()
