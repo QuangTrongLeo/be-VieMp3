@@ -21,15 +21,15 @@ public class SongService {
     private final SongRepository songRepository;
     private final NotificationService notificationService;
     private final ListenHistoryService listenHistoryService;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final FileStorageService fileStorageService;
     private final RecommendationService recommendationService;
     private final SecurityService securityService;
 
     // ===== CREATE =====
     public SongResponse createSong(SongRequest request) {
-        Artist artist = entityQueryService.findArtistById(request.getArtistId());
-        Genre genre = entityQueryService.findGenreById(request.getGenreId());
+        Artist artist = entityService.findArtistById(request.getArtistId());
+        Genre genre = entityService.findGenreById(request.getGenreId());
 
         String coverUrl = fileStorageService.upload(request.getCover(), "songs/covers");
         String audioUrl = fileStorageService.upload(request.getAudio(), "songs/audios");
@@ -51,7 +51,7 @@ public class SongService {
 
     // ===== UPDATE =====
     public SongResponse updateSong(String id, SongRequest request) {
-        Song song = entityQueryService.findSongById(id);
+        Song song = entityService.findSongById(id);
         boolean isUpdated = false;
 
         // ===== Title =====
@@ -66,13 +66,13 @@ public class SongService {
         }
         // ===== Genre =====
         if (request.getGenreId() != null) {
-            Genre genre = entityQueryService.findGenreById(request.getGenreId());
+            Genre genre = entityService.findGenreById(request.getGenreId());
             song.setGenre(genre);
             isUpdated = true;
         }
         // ===== Album =====
         if (request.getAlbumId() != null) {
-            Album album = entityQueryService.findAlbumById(request.getAlbumId());
+            Album album = entityService.findAlbumById(request.getAlbumId());
             if (!album.getArtist().getId().equals(song.getArtist().getId())) {
                 throw new IllegalArgumentException("Album không thuộc cùng nghệ sĩ");
             }
@@ -107,7 +107,7 @@ public class SongService {
 
     // ===== DELETE =====
     public void deleteSong(String songId) {
-        Song song = entityQueryService.findSongById(songId);
+        Song song = entityService.findSongById(songId);
         if (song.getCover() != null) {
             fileStorageService.deleteByUrl(song.getCover());
         }
@@ -119,7 +119,7 @@ public class SongService {
 
     // ===== GET BY ID =====
     public SongResponse getSongById(String songId) {
-        Song song = entityQueryService.findSongById(songId);
+        Song song = entityService.findSongById(songId);
         listenHistoryService.saveListenHistory(songId);
         return SongMapper.toResponse(song);
     }
@@ -131,28 +131,28 @@ public class SongService {
 
     // ===== GET SONGS BY ARTIST =====
     public List<SongResponse> getSongsByArtist(String artistId) {
-        entityQueryService.findArtistById(artistId);
+        entityService.findArtistById(artistId);
         List<Song> songs = songRepository.findByArtistId(artistId);
         return SongMapper.toResponseList(songs);
     }
 
     // ===== GET SONGS BY ALBUM =====
     public List<SongResponse> getSongsByAlbum(String albumId) {
-        entityQueryService.findAlbumById(albumId);
+        entityService.findAlbumById(albumId);
         List<Song> songs = songRepository.findByAlbumId(albumId);
         return SongMapper.toResponseList(songs);
     }
 
     // ===== GET SONGS BY GENRE =====
     public List<SongResponse> getSongsByGenre(String genreId) {
-        entityQueryService.findGenreById(genreId);
+        entityService.findGenreById(genreId);
         List<Song> songs = songRepository.findByGenreId(genreId);
         return SongMapper.toResponseList(songs);
     }
 
     // ===== GET SONGS BY PLAYLIST =====
     public List<SongResponse> getSongsByPlaylist(String playlistId) {
-        Playlist playlist = entityQueryService.findPlaylistById(playlistId);
+        Playlist playlist = entityService.findPlaylistById(playlistId);
         List<Song> songs = playlist.getSongs();
         return SongMapper.toResponseList(songs);
     }

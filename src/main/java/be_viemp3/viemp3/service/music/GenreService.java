@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GenreService {
     private final GenreRepository genreRepository;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
 
     // CREATE GENRE
     public GenreResponse createGenre(GenreRequest request) {
@@ -39,12 +39,12 @@ public class GenreService {
 
     // GET GENRE BY ID
     public GenreResponse getGenreById(String id) {
-        return GenreMapper.toResponse(entityQueryService.findGenreById(id));
+        return GenreMapper.toResponse(entityService.findGenreById(id));
     }
 
     // UPDATE GENRE
     public GenreResponse updateGenre(String id, GenreRequest request) {
-        Genre genre = entityQueryService.findGenreById(id);
+        Genre genre = entityService.findGenreById(id);
         String newName = request.getName().trim().toUpperCase();
         if (!genre.getName().equalsIgnoreCase(newName)
                 && genreRepository.existsByNameIgnoreCase(newName)) {
@@ -57,7 +57,7 @@ public class GenreService {
 
     // DELETE GENRE
     public void deleteGenre(String id) {
-        Genre genre = entityQueryService.findGenreById(id);
+        Genre genre = entityService.findGenreById(id);
         if (genre.getSongs() != null && !genre.getSongs().isEmpty()) {
             throw new IllegalStateException("Không thể xóa Genre đang chứa bài hát");
         }

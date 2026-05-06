@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ArtistService {
     private final ArtistRepository artistRepository;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final FileStorageService fileStorageService;
 
     // ===== CREATE =====
@@ -39,7 +39,7 @@ public class ArtistService {
 
     // ===== UPDATE =====
     public ArtistResponse updateArtist(String id, ArtistRequest request) {
-        Artist artist = entityQueryService.findArtistById(id);
+        Artist artist = entityService.findArtistById(id);
         boolean isUpdated = false;
 
         // ===== UPDATE NAME =====
@@ -68,7 +68,7 @@ public class ArtistService {
 
     // ===== DELETE =====
     public void deleteArtistById(String artistId) {
-        Artist artist = entityQueryService.findArtistById(artistId);
+        Artist artist = entityService.findArtistById(artistId);
         // xóa file avatar
         fileStorageService.deleteByUrl(artist.getAvatar());
         artistRepository.delete(artist);
@@ -76,13 +76,13 @@ public class ArtistService {
 
     // ===== GET BY ID =====
     public ArtistResponse getArtistById(String artistId) {
-        Artist artist = entityQueryService.findArtistById(artistId);
+        Artist artist = entityService.findArtistById(artistId);
         return ArtistMapper.toResponse(artist);
     }
 
     // ===== GET BY NAME =====
     public ArtistResponse getArtistByName(String artistName) {
-        Artist artist = entityQueryService.findArtistByName(artistName);
+        Artist artist = entityService.findArtistByName(artistName);
         return ArtistMapper.toResponse(artist);
     }
 

@@ -21,12 +21,12 @@ import java.util.List;
 public class AlbumService {
     private final AlbumRepository albumRepository;
     private final NotificationService notificationService;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final FileStorageService fileStorageService;
 
     // ===== CREATE =====
     public AlbumResponse createAlbum(AlbumRequest request) {
-        Artist artist = entityQueryService.findArtistById(request.getArtistId());
+        Artist artist = entityService.findArtistById(request.getArtistId());
         String coverUrl = fileStorageService.upload(request.getCover(), "albums");
         Album album = new Album();
         album.setTitle(request.getTitle().trim());
@@ -39,7 +39,7 @@ public class AlbumService {
 
     // ===== UPDATE =====
     public AlbumResponse updateAlbum(String id, AlbumRequest request) {
-        Album album = entityQueryService.findAlbumById(id);
+        Album album = entityService.findAlbumById(id);
         boolean isUpdated = false;
         // update title
         if (request.getTitle() != null && !request.getTitle().isBlank()) {
@@ -64,7 +64,7 @@ public class AlbumService {
 
     // ===== DELETE =====
     public void deleteAlbum(String albumId) {
-        Album album = entityQueryService.findAlbumById(albumId);
+        Album album = entityService.findAlbumById(albumId);
         if (album.getCover() != null) {
             fileStorageService.deleteByUrl(album.getCover());
         }
@@ -74,8 +74,8 @@ public class AlbumService {
     // ===== ADD SONG TO ALBUM =====
     @Transactional
     public void addSongToAlbum(SongToAlbumRequest request) {
-        Song song = entityQueryService.findSongById(request.getSongId());
-        Album album = entityQueryService.findAlbumById(request.getAlbumId());
+        Song song = entityService.findSongById(request.getSongId());
+        Album album = entityService.findAlbumById(request.getAlbumId());
         validateSameArtist(song, album);
         if (album.equals(song.getAlbum())) {
             return;
@@ -86,7 +86,7 @@ public class AlbumService {
     // ===== REMOVE SONG FROM ALBUM =====
     @Transactional
     public void removeSongFromAlbum(String songId) {
-        Song song = entityQueryService.findSongById(songId);
+        Song song = entityService.findSongById(songId);
         if (song.getAlbum() == null) {
             throw new IllegalStateException("Bài hát chưa thuộc album nào");
         }
@@ -95,7 +95,7 @@ public class AlbumService {
 
     // ===== GET BY ID =====
     public AlbumResponse getAlbumById(String albumId) {
-        return AlbumMapper.toResponse(entityQueryService.findAlbumById(albumId));
+        return AlbumMapper.toResponse(entityService.findAlbumById(albumId));
     }
 
     // ===== GET ALL =====
@@ -105,7 +105,7 @@ public class AlbumService {
 
     // ===== GET ALL ALBUMS BY ARTIST =====
     public List<AlbumResponse> getAlbumsByArtist(String artistId) {
-        entityQueryService.findArtistById(artistId);
+        entityService.findArtistById(artistId);
         List<Album> albums = albumRepository.findByArtistId(artistId);
         return AlbumMapper.toResponseList(albums);
     }
