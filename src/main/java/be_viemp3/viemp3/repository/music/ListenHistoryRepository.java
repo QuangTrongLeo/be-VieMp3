@@ -17,6 +17,16 @@ public interface ListenHistoryRepository extends JpaRepository<ListenHistory, St
 
     @Query(value = """
         SELECT 
+            DATE_FORMAT(listened_at, '%Y-%m-%d') as period, 
+            COUNT(id) as totalListen 
+        FROM listen_history 
+        GROUP BY period 
+        ORDER BY period ASC
+    """, nativeQuery = true)
+    List<Object[]> getListenStatsByDayNative();
+
+    @Query(value = """
+        SELECT 
             DATE_FORMAT(listened_at, '%x-%v') as period, 
             COUNT(id) as totalListen 
         FROM listen_history 

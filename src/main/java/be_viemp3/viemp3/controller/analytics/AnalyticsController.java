@@ -54,12 +54,12 @@ public class AnalyticsController {
     }
 
     // ===== LISTEN =====
-    @GetMapping("/listen/month")
-    public ApiResponse<List<ListenStatisticsResponse>> getListenByMonth() {
+    @GetMapping("/listen/day")
+    public ApiResponse<List<ListenStatisticsResponse>> getListenByDay() {
         return ApiResponse.<List<ListenStatisticsResponse>>builder()
                 .success(true)
-                .message("Lấy thống kê lượt nghe theo tháng thành công")
-                .data(listenStatisticsService.getListenByMonth())
+                .message("Lấy thống kê lượt nghe theo ngày thành công")
+                .data(listenStatisticsService.getListenByDay())
                 .build();
     }
 
@@ -69,6 +69,15 @@ public class AnalyticsController {
                 .success(true)
                 .message("Lấy thống kê lượt nghe theo tuần thành công")
                 .data(listenStatisticsService.getListenByWeek())
+                .build();
+    }
+
+    @GetMapping("/listen/month")
+    public ApiResponse<List<ListenStatisticsResponse>> getListenByMonth() {
+        return ApiResponse.<List<ListenStatisticsResponse>>builder()
+                .success(true)
+                .message("Lấy thống kê lượt nghe theo tháng thành công")
+                .data(listenStatisticsService.getListenByMonth())
                 .build();
     }
 
