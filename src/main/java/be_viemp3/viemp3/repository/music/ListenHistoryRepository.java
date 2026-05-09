@@ -15,21 +15,25 @@ public interface ListenHistoryRepository extends JpaRepository<ListenHistory, St
     long countByUserId(String userId);
     void deleteById(String id);
 
+    // Thống kê theo ngày
     @Query(value = """
         SELECT 
-            DATE_FORMAT(listened_at, '%Y-%m-%d') as period, 
-            COUNT(id) as totalListen 
-        FROM listen_history 
+            DATE_FORMAT(lh.listened_at, '%Y-%m-%d') as period, 
+            SUM(s.listen_count) as totalListen 
+        FROM listen_history lh
+        JOIN songs s ON lh.song_id = s.id
         GROUP BY period 
         ORDER BY period ASC
     """, nativeQuery = true)
     List<Object[]> getListenStatsByDayNative();
 
+    // Thống kê theo tuần
     @Query(value = """
         SELECT 
-            DATE_FORMAT(listened_at, '%x-%v') as period, 
-            COUNT(id) as totalListen 
-        FROM listen_history 
+            DATE_FORMAT(lh.listened_at, '%x-%v') as period, 
+            SUM(s.listen_count) as totalListen 
+        FROM listen_history lh
+        JOIN songs s ON lh.song_id = s.id
         GROUP BY period 
         ORDER BY period ASC
     """, nativeQuery = true)
@@ -38,9 +42,10 @@ public interface ListenHistoryRepository extends JpaRepository<ListenHistory, St
     // Thống kê theo tháng
     @Query(value = """
         SELECT 
-            DATE_FORMAT(listened_at, '%Y-%m') as period, 
-            COUNT(id) as totalListen 
-        FROM listen_history 
+            DATE_FORMAT(lh.listened_at, '%Y-%m') as period, 
+            SUM(s.listen_count) as totalListen 
+        FROM listen_history lh
+        JOIN songs s ON lh.song_id = s.id
         GROUP BY period 
         ORDER BY period ASC
     """, nativeQuery = true)
