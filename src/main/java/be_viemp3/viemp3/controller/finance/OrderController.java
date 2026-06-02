@@ -32,18 +32,18 @@ public class OrderController {
         );
     }
 
-        @PreAuthorize("hasRole('ADMIN')")
-        @GetMapping("/all")
-        public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
-            List<OrderResponse> response = orderService.getAllOrders();
-            return ResponseEntity.ok(
-                    ApiResponse.<List<OrderResponse>>builder()
-                            .success(true)
-                            .message("Lấy danh sách tất cả đơn hàng thành công")
-                            .data(response)
-                            .build()
-            );
-        }
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
+        List<OrderResponse> response = orderService.getAllOrders();
+        return ResponseEntity.ok(
+                ApiResponse.<List<OrderResponse>>builder()
+                        .success(true)
+                        .message("Lấy danh sách tất cả đơn hàng thành công")
+                        .data(response)
+                        .build()
+        );
+    }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN', 'MOD')")
     @GetMapping("/me")

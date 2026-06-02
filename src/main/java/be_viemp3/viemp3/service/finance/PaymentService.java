@@ -14,8 +14,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
-    private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
     private final EntityQueryService entityService;
     private final OrderService orderService;
     private final VNPayConfig vnPayConfig;
