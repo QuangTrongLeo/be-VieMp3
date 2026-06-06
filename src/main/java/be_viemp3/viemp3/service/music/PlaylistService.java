@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlaylistService {
     private final PlaylistRepository playlistRepository;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final FileStorageService fileStorageService;
     private final SecurityService securityService;
 
@@ -48,7 +48,7 @@ public class PlaylistService {
 
     // ===== UPDATE =====
     public PlaylistResponse updatePlaylist(String id, PlaylistRequest request) {
-        Playlist playlist = entityQueryService.findPlaylistById(id);
+        Playlist playlist = entityService.findPlaylistById(id);
         User user = securityService.getCurrentUser();
         // check owner
         if (!playlist.getUser().getEmail().equals(user.getEmail())) {
@@ -78,7 +78,7 @@ public class PlaylistService {
 
     // ===== DELETE =====
     public void deletePlaylist(String playlistId) {
-        Playlist playlist = entityQueryService.findPlaylistById(playlistId);
+        Playlist playlist = entityService.findPlaylistById(playlistId);
         User user = securityService.getCurrentUser();
         if (!playlist.getUser().getEmail().equals(user.getEmail())) {
             throw new IllegalArgumentException("Bạn không có quyền xoá playlist này");
@@ -92,12 +92,12 @@ public class PlaylistService {
     // ===== ADD SONG TO PLAYLIST =====
     @Transactional
     public void addSongToPlaylist(SongToPlaylistRequest request) {
-        Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
+        Playlist playlist = entityService.findPlaylistById(request.getPlaylistId());
         User currentUser = securityService.getCurrentUser();
         if (!playlist.getUser().getId().equals(currentUser.getId())) {
             throw new AccessDeniedException("Bạn không có quyền chỉnh sửa playlist này");
         }
-        Song song = entityQueryService.findSongById(request.getSongId());
+        Song song = entityService.findSongById(request.getSongId());
         if (playlist.getSongs().contains(song)) {
             return;
         }
@@ -107,12 +107,12 @@ public class PlaylistService {
     // ===== REMOVE SONG FROM PLAYLIST =====
     @Transactional
     public void removeSongFromPlaylist(SongToPlaylistRequest request) {
-        Playlist playlist = entityQueryService.findPlaylistById(request.getPlaylistId());
+        Playlist playlist = entityService.findPlaylistById(request.getPlaylistId());
         User currentUser = securityService.getCurrentUser();
         if (!playlist.getUser().getId().equals(currentUser.getId())) {
             throw new AccessDeniedException("Bạn không có quyền chỉnh sửa playlist này");
         }
-        Song song = entityQueryService.findSongById(request.getSongId());
+        Song song = entityService.findSongById(request.getSongId());
         if (!playlist.getSongs().contains(song)) {
             throw new IllegalStateException("Bài hát không tồn tại trong playlist");
         }
@@ -121,7 +121,7 @@ public class PlaylistService {
 
     // ===== GET BY ID =====
     public PlaylistResponse getPlaylistById(String playlistId) {
-        return PlaylistMapper.toResponse(entityQueryService.findPlaylistById(playlistId));
+        return PlaylistMapper.toResponse(entityService.findPlaylistById(playlistId));
     }
 
     // ===== GET ALL BY USER =====

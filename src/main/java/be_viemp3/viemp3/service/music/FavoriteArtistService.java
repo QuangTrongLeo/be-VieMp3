@@ -20,14 +20,14 @@ import java.util.List;
 public class FavoriteArtistService {
     private final ArtistRepository artistRepository;
     private final FavoriteArtistRepository favoriteArtistRepository;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final SecurityService securityService;
 
     // ===== ADD ARTIST TO FAVORITE =====
     @Transactional
     public void addArtistToFavorite(String artistId) {
         User currentUser = securityService.getCurrentUser();
-        Artist artist = entityQueryService.findArtistById(artistId);
+        Artist artist = entityService.findArtistById(artistId);
         boolean exists = favoriteArtistRepository.existsByUserIdAndArtistId(currentUser.getId(), artistId);
         if (exists) return;
         FavoriteArtist favoriteArtist = new FavoriteArtist();
@@ -41,7 +41,7 @@ public class FavoriteArtistService {
     @Transactional
     public void removeArtistFromFavorite(String artistId) {
         User currentUser = securityService.getCurrentUser();
-        FavoriteArtist favoriteArtist = entityQueryService.findFavoriteArtist(currentUser.getId(), artistId);
+        FavoriteArtist favoriteArtist = entityService.findFavoriteArtist(currentUser.getId(), artistId);
         favoriteArtistRepository.delete(favoriteArtist);
         artistRepository.decrementFavorites(artistId);
     }

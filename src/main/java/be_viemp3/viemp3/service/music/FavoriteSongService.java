@@ -20,14 +20,14 @@ import java.util.List;
 public class FavoriteSongService {
     private final SongRepository songRepository;
     private final FavoriteSongRepository favoriteSongRepository;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final SecurityService securityService;
 
     // ===== ADD SONG TO FAVORITE =====
     @Transactional
     public void addSongToFavorite(String songId) {
         User currentUser = securityService.getCurrentUser();
-        Song song = entityQueryService.findSongById(songId);
+        Song song = entityService.findSongById(songId);
         boolean exists = favoriteSongRepository.existsByUserIdAndSongId(currentUser.getId(), songId);
         if (exists) {
             return; // đã tồn tại thì không làm gì
@@ -43,7 +43,7 @@ public class FavoriteSongService {
     @Transactional
     public void removeSongFromFavorite(String songId) {
         User currentUser = securityService.getCurrentUser();
-        FavoriteSong favoriteSong = entityQueryService.findFavoriteSong(currentUser.getId(), songId);
+        FavoriteSong favoriteSong = entityService.findFavoriteSong(currentUser.getId(), songId);
         favoriteSongRepository.delete(favoriteSong);
         songRepository.decrementFavorites(songId);
     }

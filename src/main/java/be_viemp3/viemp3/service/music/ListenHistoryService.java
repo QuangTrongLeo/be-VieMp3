@@ -22,7 +22,7 @@ import java.util.Optional;
 public class ListenHistoryService {
 
     private final ListenHistoryRepository listenHistoryRepository;
-    private final EntityQueryService entityQueryService;
+    private final EntityQueryService entityService;
     private final SecurityService securityService;
     private final SongRepository songRepository;
     private static final int MAX_HISTORY = 30;
@@ -36,7 +36,7 @@ public class ListenHistoryService {
     @Transactional
     public void saveListenHistory(String songId) {
         User user = securityService.getCurrentUser();
-        Song song = entityQueryService.findSongById(songId);
+        Song song = entityService.findSongById(songId);
         Optional<ListenHistory> optional = listenHistoryRepository.findByUserIdAndSongId(user.getId(), songId);
         if (optional.isPresent()) {
             ListenHistory history = optional.get();
